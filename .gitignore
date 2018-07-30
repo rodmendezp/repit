@@ -1,0 +1,12 @@
+# Global Dev Settings file
+/repit/settings_dev.py
+
+# IDE
+.idea/
+
+# Extra Files
+*.*~
+db.sqlite3
+
+# Python
+__pycache__/
