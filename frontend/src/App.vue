@@ -10,9 +10,8 @@
     };
 </script>
 
-<style lang="scss">
-    #app {
-        padding: 0;
-        margin: 0;
-    }
+<style lang="sass">
+    #app
+        padding: 0
+        margin: 0
 </style>
