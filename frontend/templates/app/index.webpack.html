@@ -1,0 +1,8 @@
+{% extends 'app/index.base.html' %}
+{% load render_bundle from webpack_loader %}
+
+{% block content %}
+    {% render_bundle 'manifest' config='REPIT' %}
+    {% render_bundle 'vendor' config='REPIT' %}
+    {% render_bundle 'app' config='REPIT' %}
+{% endblock %}

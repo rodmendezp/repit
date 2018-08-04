@@ -1,0 +1,6 @@
+{% extends 'auth/auth.base.html' %}
+{% load render_bundle from webpack_loader %}
+
+{% block content %}
+    {% render_bundle 'auth' config='REPIT' %}
+{% endblock %}

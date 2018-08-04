@@ -1,0 +1,14 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Repit</title>
+</head>
+<body>
+    <div id="app"></div>
+    {% block content %}
+    {% endblock %}
+    {% csrf_token %}
+</body>
+</html>
