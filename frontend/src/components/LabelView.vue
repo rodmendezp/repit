@@ -1,8 +1,5 @@
 <template>
     <div>
-        Video_ID: {{ $route.params.video_id }}
-        St_Time: {{ $route.params.st_time }}
-        End_Time: {{ $route.params.end_time }}
         <twitch-player
             :videoId="$route.params.video_id"
             :stTime="$route.params.st_time"
@@ -11,7 +8,6 @@
 </template>
 
 <script>
-
     import TwitchPlayer from './player/TwitchPlayer';
 
     export default {
@@ -25,6 +21,6 @@
     };
 </script>
 
-<style>
+<style lang="sass">
 
 </style>
