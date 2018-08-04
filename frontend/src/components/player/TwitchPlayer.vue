@@ -9,25 +9,17 @@
     export default {
         name: 'TwitchPlayer',
         props: {
-            videoId: {
-                type: String,
-            },
-            stTime: {
-                type: Number,
-                default: 0,
-            },
-            endTime: {
-                type: Number,
-                default: 1,
-            },
+            videoId: { type: String },
+            stTime: { type: Number },
+            endTime: { type: Number },
         },
         components: {},
         data() {
             return {
-                TwitchScript: null,
                 player: null,
                 options: {},
-                pauseInstantPlay: false,
+                seekAtInstantPlay: true,
+                changeStatus: false,
             };
         },
         computed: {
@@ -39,9 +31,15 @@
         },
         methods: {
             loadScript,
+            checkPlayerTime() {
+                const currTime = this.player.getCurrentTime();
+                if (currTime < this.stTime || currTime > this.endTime) {
+                    this.player.seek(this.stTime);
+                    this.player.pause();
+                }
+            },
         },
         mounted() {
-            console.log('StTime: ', this.stTime, ' EndTime: ', this.endTime);
             this.options.video = this.videoId;
             this.loadScript('http://player.twitch.tv/js/embed/v1.js', 'Twitch').then((Twitch) => {
                 console.log('Twitch Script Loaded');
@@ -58,9 +56,19 @@
                     console.log('Twitch Player PAUSE');
                 });
                 this.player.addEventListener(Twitch.Player.PLAYING, () => {
-                    const currTime = this.player.getCurrentTime();
-                    if (currTime < this.stTime || currTime > this.endTime) {
+                    console.log('Twitch Player PLAYING');
+                    if (this.seekAtInstantPlay) {
                         this.player.seek(this.stTime);
+                        this.seekAtInstantPlay = false;
+                    } else {
+                        const currTime = this.player.getCurrentTime();
+                        if (currTime < this.stTime || currTime > this.endTime) {
+                            this.player.seek(this.stTime);
+                            this.player.pause();
+                        } else {
+                            const timeLeft = (Math.round(this.endTime - currTime) + 1) * 1000;
+                            setTimeout(this.checkPlayerTime, timeLeft);
+                        }
                     }
                 });
             });
