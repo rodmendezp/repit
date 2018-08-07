@@ -2,6 +2,7 @@ from django.db import models
 
 
 class TwitchModel(models.Model):
+    id = models.AutoField(db_column='ID', primary_key=True)
     twid = models.IntegerField()
 
     class Meta:
