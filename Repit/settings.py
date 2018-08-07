@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'repituser.apps.RepituserConfig',
     'twitchdata.apps.TwitchdataConfig',
     'frontend.apps.FrontendConfig',
+    'rest_framework',
     'webpack_loader',
 ]
 
