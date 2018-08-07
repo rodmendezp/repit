@@ -16,3 +16,6 @@ venv/
 
 # Static Files
 static/
+
+# Migrations
+*/migrations/
