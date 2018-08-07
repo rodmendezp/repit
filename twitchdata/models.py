@@ -18,6 +18,7 @@ class Channel(TwitchModel):
 
 
 class Streamer(models.Model):
+    id = models.AutoField(db_column='ID', primary_key=True)
     twitch_user = models.ForeignKey(TwitchUser, on_delete=models.DO_NOTHING)
     channel = models.ForeignKey(Channel, on_delete=models.DO_NOTHING)
 
@@ -52,6 +53,7 @@ class Emoticon(TwitchModel):
 
 
 class Chat(models.Model):
+    id = models.AutoField(db_column='ID', primary_key=True)
     video = models.ForeignKey(Video, on_delete=models.DO_NOTHING)
 
     @property
