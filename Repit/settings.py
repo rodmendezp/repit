@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'repituser.apps.RepituserConfig',
+    'twitchdata.apps.TwitchdataConfig',
     'frontend.apps.FrontendConfig',
     'webpack_loader',
 ]
@@ -78,8 +79,12 @@ WSGI_APPLICATION = 'Repit.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'repit',
+        'USER': 'rodmendezp',
+        'PASSWORD': 'raidri22',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
