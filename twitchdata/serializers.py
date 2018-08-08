@@ -3,6 +3,8 @@ from django.db import models
 from twitchdata.models import *
 
 
+# TODO: Support Create and Update for nested models
+
 class TwitchUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = TwitchUser
