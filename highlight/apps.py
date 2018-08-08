@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class HighligthConfig(AppConfig):
-    name = 'highligth'
+class HighlightConfig(AppConfig):
+    name = 'highlight'
