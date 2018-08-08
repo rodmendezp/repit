@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'repituser.apps.RepituserConfig',
     'twitchdata.apps.TwitchdataConfig',
+    'highlight.apps.HighlightConfig',
     'frontend.apps.FrontendConfig',
     'rest_framework',
     'webpack_loader',
