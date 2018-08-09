@@ -9,7 +9,8 @@ from .views import *
 # Right now it does not support nested models
 # For now that I am not able to not run RestAPITestCase tests it will run N extra test
 # TODO: Check how to not run base class
-# TODO: Add suppport for nested models
+# TODO: Add test case to update using another id of nested model
+# TODO: Add support for update deep nested models (grandsons, not only children)
 class RestAPITestCase(APITestCase):
     def __init__(self, methodName='runTest'):
         self.model = None
@@ -54,6 +55,16 @@ class RestAPITestCase(APITestCase):
         obj = self.model.objects.last()
         return self.client.delete(self.url + str(obj.id))
 
+    def deep_remove_ids(self, data):
+        has_id = False
+        for key, value in data.items():
+            if isinstance(value, dict):
+                self.deep_remove_ids(value)
+            if key == 'id':
+                has_id = True
+        if has_id:
+            del data['id']
+
     def test_add_object(self, prev_count=0):
         if self.__class__ is RestAPITestCase:
             return
@@ -68,7 +79,7 @@ class RestAPITestCase(APITestCase):
         self.assertEqual(self.model.objects.count(), 1)
         obj = self.model.objects.last()
         response = self.client.get(self.url + str(obj.id))
-        del response.data['id']
+        self.deep_remove_ids(response.data)
         self.assertEqual(response.data, self.data)
 
     def test_get_list_objects(self):
@@ -94,7 +105,7 @@ class RestAPITestCase(APITestCase):
         obj = self.model.objects.last()
         response = self.client.put(self.url + str(obj.id), self.modified_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        del response.data['id']
+        self.deep_remove_ids(response.data)
         self.assertEqual(response.data, self.modified_data)
 
 
@@ -132,61 +143,63 @@ class RestAPITestCase(APITestCase):
 #         super().setUp()
 
 
-# class StreamerRestAPITest(RestAPITestCase):
+class StreamerRestAPITest(RestAPITestCase):
+    def setUp(self):
+        self.model = Streamer
+        self.serializer = StreamerSerializer
+        self.view_list = StreamerList
+        self.view_detail = StreamerDetail
+        self.data = {
+            'twitch_user': {
+                'twid': 12345,
+                'name': 'raidrix',
+            },
+            'channel': {
+                'twid': 12345,
+            }
+        }
+        self.modified_data = {
+            'twitch_user': {
+                'twid': 54321,
+                'name': 'no_raidrix',
+            },
+            'channel': {
+                'twid': 54321,
+            },
+        }
+        self.url = '/twitchdata/streamer/'
+        super().setUp()
+
+
+# class VideoRestAPITest(RestAPITestCase):
 #     def setUp(self):
-#         self.model = Streamer
-#         self.serializer = StreamerSerializer
-#         self.view_list = StreamerList
-#         self.view_detail = StreamerDetail
+#         self.model = Video
+#         self.serializer = VideoSerializer
+#         self.view_list = VideoList
+#         self.view_detail = VideoDetail
 #         self.data = {
-#             'twitch_user': {
+#             'twid': 12345,
+#             'streamer': {
+#                 'twitch_user': {
+#                     'twid': 54321,
+#                     'name': 'no_raidrix',
+#                 },
+#                 'channel': {
+#                     'twid': 54321,
+#                 },
+#             },
+#             'game': {
 #                 'twid': 12345,
-#                 'name': 'raidrix',
+#                 'name': 'PUBG'
 #             },
-#             'channel': {
-#                 'twid': 12345,
-#             }
+#             'recorded': datetime.now(),
+#             'length': str(datetime.now().time()),
 #         }
-#         self.modified_data = {
-#             'twitch_user': {
-#                 'twid': 54321,
-#                 'name': 'no_raidrix',
-#             },
-#             'channel': {
-#                 'twid': 54321,
-#             },
-#         }
-#         self.url = '/twitchdata/streamer/'
+#         self.modified_data = self.data
+#         self.url = '/twitchdata/video/'
 #         super().setUp()
 
 
-class VideoRestAPITest(RestAPITestCase):
-    def setUp(self):
-        self.model = Video
-        self.serializer = VideoSerializer
-        self.view_list = VideoList
-        self.view_detail = VideoDetail
-        self.data = {
-            'twid': 12345,
-            'streamer': {
-                'twitch_user': {
-                    'twid': 54321,
-                    'name': 'no_raidrix',
-                },
-                'channel': {
-                    'twid': 54321,
-                },
-            },
-            'game': {
-                'twid': 12345,
-                'name': 'PUBG'
-            },
-            'recorded': datetime.now(),
-            'length': str(datetime.now().time()),
-        }
-        self.modified_data = self.data
-        self.url = '/twitchdata/video/'
-        super().setUp()
 # class GameRestAPITest(RestAPITestCase):
 #     def setUp(self):
 #         self.model = Game
