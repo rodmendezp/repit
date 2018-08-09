@@ -1,11 +1,18 @@
 from twitchdata.serializers import *
 from twitchdata.models import *
 from rest_framework import generics
+from rest_framework.pagination import LimitOffsetPagination
+
+
+class TwitchDataLOPagination(LimitOffsetPagination):
+    default_limit = 100
+    max_default = 1000
 
 
 class TwitchUserList(generics.ListCreateAPIView):
     queryset = TwitchUser.objects.all()
     serializer_class = TwitchUserSerializer
+    pagination_class = TwitchDataLOPagination
 
 
 class TwitchUserDetail(generics.RetrieveUpdateDestroyAPIView):
