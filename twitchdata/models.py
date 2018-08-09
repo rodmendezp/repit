@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime
 
 
 class TwitchModel(models.Model):
@@ -34,13 +35,15 @@ class Video(TwitchModel):
     length = models.TimeField()
 
 
-class Clip(TwitchModel):
+class Clip(models.Model):
+    id = models.AutoField(db_column='ID', primary_key=True)
     streamer = models.ForeignKey(Streamer, on_delete=models.DO_NOTHING)
     video = models.ForeignKey(Video, on_delete=models.DO_NOTHING)
     creator = models.ForeignKey(TwitchUser, on_delete=models.DO_NOTHING)
     offset = models.TimeField()
     duration = models.TimeField()
     created = models.DateTimeField()
+    added = models.DateTimeField(default=datetime.now)
     slug = models.CharField(max_length=50)
     title = models.TextField()
     views = models.IntegerField()
