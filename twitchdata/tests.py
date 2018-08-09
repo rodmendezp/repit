@@ -113,6 +113,22 @@ class TwitchUserRestAPITest(RestAPITestCase):
         super().setUp()
 
 
+class ChannelRestAPITest(RestAPITestCase):
+    def setUp(self):
+        self.model = Channel
+        self.serializer = ChannelSerializer
+        self.view_list = ChannelList
+        self.view_detail = ChannelDetail
+        self.data = {
+            'twid': 12345,
+        }
+        self.modified_data = {
+            'twid': 54321,
+        }
+        self.url = '/twitchdata/channel/'
+        super().setUp()
+
+
 class GameRestAPITest(RestAPITestCase):
     def setUp(self):
         self.model = Game
@@ -131,17 +147,4 @@ class GameRestAPITest(RestAPITestCase):
         super().setUp()
 
 
-class ChannelRestAPITest(RestAPITestCase):
-    def setUp(self):
-        self.model = Channel
-        self.serializer = ChannelSerializer
-        self.view_list = ChannelList
-        self.view_detail = ChannelDetail
-        self.data = {
-            'twid': 12345,
-        }
-        self.modified_data = {
-            'twid': 54321,
-        }
-        self.url = '/twitchdata/channel/'
-        super().setUp()
+class
