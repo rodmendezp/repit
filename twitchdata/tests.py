@@ -1,5 +1,6 @@
 from rest_framework.test import APITestCase
 from rest_framework import status
+from datetime import datetime
 from .models import *
 from .views import *
 
@@ -67,6 +68,7 @@ class RestAPITestCase(APITestCase):
         self.assertEqual(self.model.objects.count(), 1)
         obj = self.model.objects.last()
         response = self.client.get(self.url + str(obj.id))
+        del response.data['id']
         self.assertEqual(response.data, self.data)
 
     def test_get_list_objects(self):
@@ -92,59 +94,112 @@ class RestAPITestCase(APITestCase):
         obj = self.model.objects.last()
         response = self.client.put(self.url + str(obj.id), self.modified_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        del response.data['id']
         self.assertEqual(response.data, self.modified_data)
 
 
-class TwitchUserRestAPITest(RestAPITestCase):
-    def setUp(self):
-        self.model = TwitchUser
-        self.serializer = TwitchUserSerializer
-        self.view_list = TwitchUserList
-        self.view_detail = TwitchUserDetail
-        self.data = {
-            'twid': 1728499,
-            'name': 'raidrix',
-        }
-        self.modified_data = {
-            'twid': 1728499,
-            'name': 'no_raidrix'
-        }
-        self.url = '/twitchdata/twitch_user/'
-        super().setUp()
+# class TwitchUserRestAPITest(RestAPITestCase):
+#     def setUp(self):
+#         self.model = TwitchUser
+#         self.serializer = TwitchUserSerializer
+#         self.view_list = TwitchUserList
+#         self.view_detail = TwitchUserDetail
+#         self.data = {
+#             'twid': 1728499,
+#             'name': 'raidrix',
+#         }
+#         self.modified_data = {
+#             'twid': 1728499,
+#             'name': 'no_raidrix'
+#         }
+#         self.url = '/twitchdata/twitch_user/'
+#         super().setUp()
 
 
-class ChannelRestAPITest(RestAPITestCase):
+# class ChannelRestAPITest(RestAPITestCase):
+#     def setUp(self):
+#         self.model = Channel
+#         self.serializer = ChannelSerializer
+#         self.view_list = ChannelList
+#         self.view_detail = ChannelDetail
+#         self.data = {
+#             'twid': 12345,
+#         }
+#         self.modified_data = {
+#             'twid': 54321,
+#         }
+#         self.url = '/twitchdata/channel/'
+#         super().setUp()
+
+
+# class StreamerRestAPITest(RestAPITestCase):
+#     def setUp(self):
+#         self.model = Streamer
+#         self.serializer = StreamerSerializer
+#         self.view_list = StreamerList
+#         self.view_detail = StreamerDetail
+#         self.data = {
+#             'twitch_user': {
+#                 'twid': 12345,
+#                 'name': 'raidrix',
+#             },
+#             'channel': {
+#                 'twid': 12345,
+#             }
+#         }
+#         self.modified_data = {
+#             'twitch_user': {
+#                 'twid': 54321,
+#                 'name': 'no_raidrix',
+#             },
+#             'channel': {
+#                 'twid': 54321,
+#             },
+#         }
+#         self.url = '/twitchdata/streamer/'
+#         super().setUp()
+
+
+class VideoRestAPITest(RestAPITestCase):
     def setUp(self):
-        self.model = Channel
-        self.serializer = ChannelSerializer
-        self.view_list = ChannelList
-        self.view_detail = ChannelDetail
+        self.model = Video
+        self.serializer = VideoSerializer
+        self.view_list = VideoList
+        self.view_detail = VideoDetail
         self.data = {
             'twid': 12345,
+            'streamer': {
+                'twitch_user': {
+                    'twid': 54321,
+                    'name': 'no_raidrix',
+                },
+                'channel': {
+                    'twid': 54321,
+                },
+            },
+            'game': {
+                'twid': 12345,
+                'name': 'PUBG'
+            },
+            'recorded': datetime.now(),
+            'length': str(datetime.now().time()),
         }
-        self.modified_data = {
-            'twid': 54321,
-        }
-        self.url = '/twitchdata/channel/'
+        self.modified_data = self.data
+        self.url = '/twitchdata/video/'
         super().setUp()
-
-
-class GameRestAPITest(RestAPITestCase):
-    def setUp(self):
-        self.model = Game
-        self.serializer = GameSerializer
-        self.view_list = GameList
-        self.view_detail = GameDetail
-        self.data = {
-            'twid': 12345,
-            'name': 'PUBG'
-        }
-        self.modified_data = {
-            'twid': 12345,
-            'name': 'no_PUBG'
-        }
-        self.url = '/twitchdata/game/'
-        super().setUp()
-
-
-class
+# class GameRestAPITest(RestAPITestCase):
+#     def setUp(self):
+#         self.model = Game
+#         self.serializer = GameSerializer
+#         self.view_list = GameList
+#         self.view_detail = GameDetail
+#         self.data = {
+#             'twid': 12345,
+#             'name': 'PUBG'
+#         }
+#         self.modified_data = {
+#             'twid': 12345,
+#             'name': 'no_PUBG'
+#         }
+#         self.url = '/twitchdata/game/'
+#         super().setUp()
