@@ -8,86 +8,70 @@ from twitchdata.models import *
 class TwitchUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = TwitchUser
-        fields = ('twid', 'name',)
+        fields = ('id', 'twid', 'name')
 
 
 class ChannelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Channel
-        fields = ('twid', )
+        fields = ('id', 'twid')
 
 
 class StreamerSerializer(serializers.ModelSerializer):
     twitch_user = TwitchUserSerializer()
     channel = ChannelSerializer()
 
-    def create(self, validated_data):
-        twitch_user_data = validated_data.pop('twitch_user')
-        twitch_user = TwitchUser.objects.create(**twitch_user_data)
-        channel_data = validated_data.pop('channel')
-        channel = Channel.objects.create(**channel_data)
-        streamer = Streamer.objects.create(twitch_user=twitch_user, channel=channel)
-        return streamer
-
-    def update(self, instance, validated_data):
-        twitch_user_data = validated_data.get('twitch_user', None)
-        twitch_user_id = twitch_user_data.get('id', None)
-        if twitch_user_id:
-            try:
-                twitch_user = TwitchUser.objects.get(pk=twitch_user_id)
-            except models.ObjectDoesNotExist:
-                return
-        channel_data = validated_data.get('channel', None)
-        channel_id = channel_data.get('id', None)
-        if channel_id:
-            try:
-                channel = Channel.objects.get(pk=channel_id)
-            except models.ObjectDoesNotExist:
-                return
-        streamer = instance
-        if twitch_user:
-            streamer.twitch_user = twitch_user
-        if channel:
-            streamer.channel = channel
-        streamer.save()
-        return streamer
-
     class Meta:
         model = Streamer
-        fields = ('twitch_user', 'channel')
+        fields = ('id', 'twitch_user', 'channel')
 
 
 class GameSerializer(serializers.ModelSerializer):
     class Meta:
         model = Game
-        fields = ('twid', 'name', )
+        fields = ('id', 'twid', 'name')
 
 
 class VideoSerializer(serializers.ModelSerializer):
+    streamer = StreamerSerializer()
+    game = GameSerializer()
+
     class Meta:
         model = Video
-        fields = ('twid', 'recorded', 'length')
+        fields = ('id', 'twid', 'streamer', 'game', 'recorded', 'length')
 
 
 class ClipSerializer(serializers.ModelSerializer):
+    streamer = StreamerSerializer()
+    video = VideoSerializer()
+    creator = TwitchUser()
+
     class Meta:
         model = Clip
-        fields = ('twid', 'title', 'views')
+        fields = ('id', 'streamer', 'video', 'creator', 'offset',
+                  'duration', 'created', 'added', 'slug', 'title', 'views')
 
 
 class EmoticonSerializer(serializers.ModelSerializer):
+    streamer = StreamerSerializer()
+
     class Meta:
         model = Emoticon
-        fields = ('set_id', 'text')
+        fields = ('id', 'twid', 'set_id', 'streamer', 'text')
 
 
 class ChatSerializer(serializers.ModelSerializer):
+    video = VideoSerializer()
+
     class Meta:
         model = Chat
-        fields = ()
+        fields = ('id', 'video')
 
 
 class MessageSerializer(serializers.ModelSerializer):
+    chat = ChatSerializer()
+    twitch_user = TwitchUserSerializer()
+
     class Meta:
         model = Message
-        fields = ('text', 'time')
+        fields = ('id', 'chat', 'twitch_user', 'text', 'time')
