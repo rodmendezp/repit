@@ -1,12 +1,11 @@
 import collections
-
-from django.db import models
 from rest_framework import serializers
 from rest_framework.utils.serializer_helpers import ReturnDict
 from rest_framework.utils import model_meta
 from twitchdata.models import *
 
 
+# TODO: Add filtering by name in TwitchUser Serializer and View
 # TODO: Support Create and Update for nested models
 class ModelSupportNestedSerializer(serializers.ModelSerializer):
     def get_by_id(self, data):
