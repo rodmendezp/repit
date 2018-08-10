@@ -11,6 +11,7 @@ from .views import *
 # TODO: Check how to not run base class
 # TODO: Add test case to update using another id of nested model
 # TODO: Add support for update deep nested models (grandsons, not only children)
+# TODO: Test adding multiple objects at once
 class RestAPITestCase(APITestCase):
     def __init__(self, methodName='runTest'):
         self.model = None
