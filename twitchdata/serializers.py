@@ -27,19 +27,20 @@ class ModelSupportNestedSerializer(serializers.ModelSerializer):
     def to_internal_value(self, data):
         return self.to_internal_value_nested(data)
 
-    def deep_ordered_to_dict(self, _data):
-        for key, value in _data.items():
+    def deep_ordered_to_returndict(self, data, serializer):
+        writable_fields = serializer._writable_fields
+        get_field_serializer = lambda x, y: list(filter(lambda _x: _x.source == y, x))[0]
+        for key, value in data.items():
             if isinstance(value, collections.OrderedDict):
-                _data[key] = self.deep_ordered_to_dict(value)
-        return dict(_data)
+                nested_serializer = get_field_serializer(writable_fields, key)
+                data[key] = self.deep_ordered_to_returndict(value, nested_serializer)
+        return ReturnDict(data, serializer=serializer)
 
     # property data modified to return dict for nested models instead of ordered dict
     @property
     def data(self):
         ret = super(serializers.Serializer, self).data
-        return_dict = ReturnDict(ret, serializer=self)
-        data = self.deep_ordered_to_dict(return_dict)
-        return data
+        return self.deep_ordered_to_returndict(ret, self)
 
     # This function will create the corresponding model if there are no serializer fields,
     # if there are, it will create the nested model and then continue
