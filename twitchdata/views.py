@@ -12,7 +12,7 @@ class TwitchDataLOPagination(LimitOffsetPagination):
 class TwitchUserList(generics.ListCreateAPIView):
     queryset = TwitchUser.objects.all()
     serializer_class = TwitchUserSerializer
-    pagination_class = TwitchDataLOPagination
+    # pagination_class = TwitchDataLOPagination
 
 
 class TwitchUserDetail(generics.RetrieveUpdateDestroyAPIView):
