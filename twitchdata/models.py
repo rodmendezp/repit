@@ -1,5 +1,5 @@
 from django.db import models
-from datetime import datetime
+from django.utils import timezone
 
 
 class TwitchModel(models.Model):
@@ -43,7 +43,7 @@ class Clip(models.Model):
     offset = models.TimeField()
     duration = models.TimeField()
     created = models.DateTimeField()
-    added = models.DateTimeField(default=datetime.now)
+    added = models.DateTimeField(default=timezone.now)
     slug = models.CharField(max_length=50)
     title = models.TextField()
     views = models.IntegerField()
