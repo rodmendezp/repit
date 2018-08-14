@@ -1,6 +1,8 @@
+from rest_framework.serializers import BaseSerializer
 from rest_framework.test import APITestCase
 from rest_framework import status
 from datetime import datetime
+from django.utils import timezone
 from .models import *
 from .views import *
 
@@ -11,6 +13,7 @@ from .views import *
 # TODO: Add test case to update using another id of nested model
 # TODO: Add support for update deep nested models (grandsons, not only children)
 # TODO: Test adding multiple objects at once
+# TODO: Test unique fields
 class BaseTestCase:
     class RestAPITestCase(APITestCase):
         def __init__(self, methodName='No test'):
@@ -20,6 +23,7 @@ class BaseTestCase:
             self.view_detail = None
             self.data = None
             self.modified_data = None
+            self.nested = False
             self.url = None
             super().__init__(methodName)
 
@@ -49,12 +53,15 @@ class BaseTestCase:
                 return False
             return True
 
-        def add_object(self):
-            return self.client.post(self.url, self.data, format='json')
+        def add_object(self, data):
+            return self.client.post(self.url, data, format='json')
 
         def remove_last_object(self):
             obj = self.model.objects.last()
             return self.client.delete(self.url + str(obj.id))
+
+        def get_object(self, pk):
+            return self.client.get(self.url + str(pk))
 
         def deep_remove_ids(self, data):
             has_id = False
@@ -67,7 +74,7 @@ class BaseTestCase:
                 del data['id']
 
         def test_add_object(self, prev_count=0):
-            response = self.add_object()
+            response = self.add_object(self.data)
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(self.model.objects.count(), prev_count + 1)
 
@@ -99,26 +106,64 @@ class BaseTestCase:
             self.deep_remove_ids(response.data)
             self.assertEqual(response.data, self.modified_data)
 
+        # It will add data and modified data to the database
+        # Will change the nested object of data to the nested object of modified_data
+        def test_update_nested_id(self):
+            if not self.nested:
+                return
+            self.add_object(self.data)
+            self.add_object(self.modified_data)
+            instance = self.model.objects.first()
+            # Get nested model field
+            nested_serializer = dict(self.serializer._declared_fields).popitem()[1]
+            nested_model = nested_serializer.Meta.model
+            nested_name = nested_model._meta.verbose_name
+            # Get last nested object added (should be the one from modified_data)
+            nested_instance = nested_model.objects.first()
+            nested_modified_instance = nested_model.objects.last()
+            self.assertEqual(nested_instance.id + 1, nested_modified_instance.id)
+            for field in nested_serializer._writable_fields:
+                if isinstance(field, BaseSerializer):
+                    continue
+                self.assertEqual(self.modified_data[nested_name][field.source], nested_modified_instance.__dict__[field.source])
+            # change nested field in data to id of nested object of modified data
+            data_modified_nested_id = self.data
+            data_modified_nested_id[nested_name] = {'id': nested_modified_instance.id}
+            # assign the proper id to the other nested fields
+            for key, nested_field in dict(self.serializer._declared_fields).items():
+                if key == nested_name:
+                    continue
+                data_modified_nested_id[key] = {'id': instance.__dict__[key + '_id']}
+            response = self.client.put(self.url + str(instance.id), data_modified_nested_id, format='json')
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-# class TwitchUserRestAPITest(RestAPITestCase):
+
+        # def test_add_multiple_objects(self):
+        #     data = [self.data, self.modified_data]
+        #     response = self.client.post(self.url, data, format='json')
+        #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        #     self.assertEqual(self.model.objects.count(), 2)
+
+
+# class TwitchUserRestAPITest(BaseTestCase.RestAPITestCase):
 #     def setUp(self):
 #         self.model = TwitchUser
 #         self.serializer = TwitchUserSerializer
 #         self.view_list = TwitchUserList
 #         self.view_detail = TwitchUserDetail
 #         self.data = {
-#             'twid': 1728499,
+#             'twid': 123456,
 #             'name': 'raidrix',
 #         }
 #         self.modified_data = {
-#             'twid': 1728499,
+#             'twid': 654321,
 #             'name': 'no_raidrix'
 #         }
 #         self.url = '/twitchdata/twitch_user/'
 #         super().setUp()
 
 
-# class ChannelRestAPITest(RestAPITestCase):
+# class ChannelRestAPITest(BaseTestCase.RestAPITestCase):
 #     def setUp(self):
 #         self.model = Channel
 #         self.serializer = ChannelSerializer
@@ -134,65 +179,83 @@ class BaseTestCase:
 #         super().setUp()
 
 
-class StreamerRestAPITest(BaseTestCase.RestAPITestCase):
-    def setUp(self):
-        self.model = Streamer
-        self.serializer = StreamerSerializer
-        self.view_list = StreamerList
-        self.view_detail = StreamerDetail
-        self.data = {
-            'twitch_user': {
-                'twid': 12345,
-                'name': 'raidrix',
-            },
-            'channel': {
-                'twid': 12345,
-            }
-        }
-        self.modified_data = {
-            'twitch_user': {
-                'twid': 54321,
-                'name': 'no_raidrix',
-            },
-            'channel': {
-                'twid': 54321,
-            },
-        }
-        self.nested = True
-        self.url = '/twitchdata/streamer/'
-        super().setUp()
-
-
-# class VideoRestAPITest(RestAPITestCase):
+# class StreamerRestAPITest(BaseTestCase.RestAPITestCase):
 #     def setUp(self):
-#         self.model = Video
-#         self.serializer = VideoSerializer
-#         self.view_list = VideoList
-#         self.view_detail = VideoDetail
+#         self.model = Streamer
+#         self.serializer = StreamerSerializer
+#         self.view_list = StreamerList
+#         self.view_detail = StreamerDetail
 #         self.data = {
-#             'twid': 12345,
-#             'streamer': {
-#                 'twitch_user': {
-#                     'twid': 54321,
-#                     'name': 'no_raidrix',
-#                 },
-#                 'channel': {
-#                     'twid': 54321,
-#                 },
-#             },
-#             'game': {
+#             'twitch_user': {
 #                 'twid': 12345,
-#                 'name': 'PUBG'
+#                 'name': 'raidrix',
 #             },
-#             'recorded': datetime.now(),
-#             'length': str(datetime.now().time()),
+#             'channel': {
+#                 'twid': 12345,
+#             }
 #         }
-#         self.modified_data = self.data
-#         self.url = '/twitchdata/video/'
+#         self.modified_data = {
+#             'twitch_user': {
+#                 'twid': 54321,
+#                 'name': 'no_raidrix',
+#             },
+#             'channel': {
+#                 'twid': 54321,
+#             },
+#         }
+#         self.nested = True
+#         self.url = '/twitchdata/streamer/'
 #         super().setUp()
 
 
-# class GameRestAPITest(RestAPITestCase):
+class VideoRestAPITest(BaseTestCase.RestAPITestCase):
+    def setUp(self):
+        self.model = Video
+        self.serializer = VideoSerializer
+        self.view_list = VideoList
+        self.view_detail = VideoDetail
+        self.data = {
+            'twid': 12345,
+            'streamer': {
+                'twitch_user': {
+                    'twid': 12345,
+                    'name': 'raidrix',
+                },
+                'channel': {
+                    'twid': 12345,
+                },
+            },
+            'game': {
+                'twid': 12345,
+                'name': 'PUBG'
+            },
+            'recorded': datetime.now(),
+            'length': str(datetime.now().time()),
+        }
+        self.modified_data = {
+            'twid': 54321,
+            'streamer': {
+                'twitch_user': {
+                    'twid': 54321,
+                    'name': 'no_raidrix',
+                },
+                'channel': {
+                    'twid': 54321,
+                }
+            },
+            'game': {
+                'twid': 54321,
+                'name': 'no_PUBG',
+            },
+            'recorded': timezone.now(),
+            'length': timezone.now().time(),
+        }
+        self.nested = True
+        self.url = '/twitchdata/video/'
+        super().setUp()
+
+
+# class GameRestAPITest(BaseTestCase.RestAPITestCase):
 #     def setUp(self):
 #         self.model = Game
 #         self.serializer = GameSerializer
