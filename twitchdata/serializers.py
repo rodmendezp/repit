@@ -5,8 +5,12 @@ from rest_framework.utils import model_meta
 from twitchdata.models import *
 
 
-# TODO: Add filtering by name in TwitchUser Serializer and View
-# TODO: Support Create and Update for nested models
+# TODO: Support Update for nested models
+# TODO: Find another way to obtain _writable_fields from serializer
+# WHY? the first but not so important problem is that is a protected field and should not be accessed
+# The second and more important, this variable does not exist if data has not been serialized, and
+# I am accessing _declared_fields (in test) which is not necessarily the same but solves the problem for now
+# (but it is still a protected field, so cause confusion and do not solve the problem)
 class ModelSupportNestedSerializer(serializers.ModelSerializer):
     def get_by_id(self, data):
         instance = self.Meta.model.objects.get(pk=data.get('id'))
@@ -69,7 +73,8 @@ class ModelSupportNestedSerializer(serializers.ModelSerializer):
                 return field.Meta.model
         return None
 
-    # Support nested models, if id is given then work with
+    # Supports nested models. If id is not give it will assumes it has to create
+    # a new instance of the nested object.
     # TODO: Need to make it recursive later and make different cases clearer
     def deep_update(self, instance, validated_data):
         info = model_meta.get_field_info(instance)
