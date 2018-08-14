@@ -4,14 +4,14 @@ from django.utils import timezone
 
 class TwitchModel(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)
-    twid = models.IntegerField()
+    twid = models.IntegerField(unique=True)
 
     class Meta:
         abstract = True
 
 
 class TwitchUser(TwitchModel):
-    name = models.CharField(max_length=100)
+    name = models.CharField(unique=True, max_length=100)
 
 
 class Channel(TwitchModel):
@@ -25,7 +25,7 @@ class Streamer(models.Model):
 
 
 class Game(TwitchModel):
-    name = models.TextField()
+    name = models.CharField(unique=True, max_length=255)
 
 
 class Video(TwitchModel):
@@ -44,7 +44,7 @@ class Clip(models.Model):
     duration = models.TimeField()
     created = models.DateTimeField()
     added = models.DateTimeField(default=timezone.now)
-    slug = models.CharField(max_length=50)
+    slug = models.CharField(unique=True, max_length=50)
     title = models.TextField()
     views = models.IntegerField()
 
