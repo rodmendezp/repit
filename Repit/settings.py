@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+AUTH_USER_MODEL = 'backend.User'
+
 
 # Application definition
 
@@ -41,6 +43,7 @@ INSTALLED_APPS = [
     'twitchdata.apps.TwitchdataConfig',
     'highlight.apps.HighlightConfig',
     'frontend.apps.FrontendConfig',
+    'backend.apps.BackendConfig',
     'rest_framework',
     'webpack_loader',
 ]
