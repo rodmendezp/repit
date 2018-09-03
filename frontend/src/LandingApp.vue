@@ -1,9 +1,14 @@
 <template>
-    <div>
-        Hello
-        <b-button @click="appRepit">Sign In</b-button>
+    <div class="container-fluid full-height">
+        <div class="row full-height align-items-center">
+            <div class="col"></div>
+            <div class="col">
+                <h1>Welcome to Repit</h1>
+                <b-button class="btn" @click="signIn">Sign In</b-button>
+            </div>
+            <div class="col"></div>
+        </div>
     </div>
-
 </template>
 
 <script>
@@ -11,20 +16,18 @@
 
     export default {
         name: 'landing',
+        data() {},
         components: {
             bButton,
         },
         methods: {
-            appRepit() {
+            signIn() {
                 location.href = 'http://127.0.0.1:8000/accounts';
             },
-        },
-        mounted() {
-            console.log('Landing mounted');
         },
     };
 </script>
 
-<style scoped>
-
+<style lang="sass">
+    @import "~@/styles/landing/main.scss"
 </style>
