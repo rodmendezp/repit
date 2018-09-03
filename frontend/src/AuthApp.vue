@@ -1,5 +1,5 @@
 <template>
-    <div id="auth" class="container-fluid" v-cloak>
+    <div id="auth" class="container-fluid full-height" v-cloak>
         <router-view/>
     </div>
 </template>
@@ -16,6 +16,6 @@
     };
 </script>
 
-<style scoped>
-
+<style lang="sass">
+    @import "~@/styles/landing/main.scss"
 </style>
