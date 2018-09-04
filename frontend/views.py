@@ -1,9 +1,11 @@
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import loader
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView, SuccessURLAllowedHostsMixin
+from django.views.generic.edit import CreateView
 from Repit.settings import DEBUG
 from repituser.forms import UserForm
+from backend.forms import RegisterForm
 
 
 def index(request):
@@ -46,6 +48,12 @@ class AjaxableResponseMixin(object):
         elif self.request.is_ajax():
             return JsonResponse({'success': True}, status=200)
         return response
+
+
+class UserCreate(AjaxableResponseMixin, SuccessURLAllowedHostsMixin, CreateView):
+    form_class = RegisterForm
+    template_name = 'auth/auth.webpack' + ('.dev' if DEBUG else '') + '.html'
+    success_url = '/'
 
 
 class EmailLoginView(AjaxableResponseMixin, LoginView):
