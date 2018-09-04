@@ -22,27 +22,27 @@
                 <div class="block">
                     <label for="id_last_name">Last Name</label>
                     <input v-model="form.last_name.value"
-                           @input="validateClasses(form.last_name)"
                            :class="form.last_name.classes"
+                           @input="validateClasses(form.last_name)"
                            ref="last_name" type="text" name="last_name" id="id_last_name"
                            placeholder="Last Name" required />
                 </div>
                 <div class="block">
                     <label for="id_password">Password</label>
                     <input v-model="form.password.value"
-                           @input="validateClasses(form.password)"
                            :class="form.password.classes"
+                           @input="validateClasses(form.password); validateClasses(form.confirm_password);"
                            ref="password" type="password" name="password" id="id_password"
                            placeholder="Password" required />
                 </div>
                 <div class="block">
                     <label for="id_confirm_password">Confirm Password</label>
                     <input v-model="form.confirm_password.value"
-                           @input="validateClasses(form.confirm_password)"
                            :class="form.confirm_password.classes"
+                           @input="validateClasses(form.confirm_password); validateClasses(form.password);"
                            ref="confirm_password" type="password"
                            name="confirm_password" id="id_confirm_password"
-                           placeholder="Confirm Password" required />
+                           placeholder="Password Confirmation " required />
                 </div>
                 <div class="align-items-center">
                     <button type="submit" class="btn btn-primary">SingUp</button>
@@ -219,13 +219,15 @@
                     console.warn('An unexpected error ocurred when contacting server');
                     this.onError();
                 };
-                xhr.send();
+                xhr.send(formData);
             },
         },
     };
 </script>
 
 <style lang="sass">
+    @import '~@/styles/auth/main.scss';
+
     .block label
         display: inline-block
         width: 140px
@@ -233,4 +235,10 @@
         color: white
     .block input
         margin-left: 10px
+
+    .register-form
+        max-width: 400px
+        margin-left: auto
+        margin-right: auto
+
 </style>
