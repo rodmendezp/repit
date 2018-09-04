@@ -42,7 +42,7 @@ class RegisterForm(forms.ModelForm):
         if not instance.has_usable_password():
             instance.set_password(self.cleaned_data['password'])
             instance.save()
-        instance.send_activation()
+        # instance.send_activation()
         return instance
 
     class Meta:
