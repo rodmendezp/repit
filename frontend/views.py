@@ -44,7 +44,7 @@ class AjaxableResponseMixin(object):
     def form_valid(self, form):
         response = super(AjaxableResponseMixin, self).form_valid(form)
         if type(response) is HttpResponseRedirect and self.request.is_ajax():
-            return JsonResponse({'url': response.url}, status=response.status)
+            return JsonResponse({'url': response.url}, status=response.status_code)
         elif self.request.is_ajax():
             return JsonResponse({'success': True}, status=200)
         return response
