@@ -31,8 +31,7 @@ const filters = {
 const methods = {
     // Validate methods will return 'true' only when _s is true for each filter. Warn is raised when _filters contains
     // undefined filters.
-    validate(_s, _filters) {
-        // If no filters are set, then return true (_s is valid)
+    isValid(_s, _filters) {
         if (!_filters) return true;
         for (let i = 0; i < _filters.length; i += 1) {
             const filter = _filters[i];
@@ -57,15 +56,38 @@ const methods = {
         }
         return true;
     },
+    isInvalid(_s, _filters) {
+        if (!_filters) return false;
+        for (let i = 0; i < _filters.length; i += 1) {
+            const filter = _filters[i];
+            let filterName = filter;
+            let params = null;
+            if (typeof filter === 'object') {
+                filterName = filter.name;
+                params = filter.params;
+            }
+            if (!(filterName in filters)) {
+                console.warn(`Filter ${filterName} doesn't exists.`);
+            } else if (['equalTo', 'notEqualTo'].includes(filterName)) {
+                // Special case, don't move this condition to upper 'else if'
+                // equalTo and notEqualTo are not intended to have access to 'this' (component), so component data
+                // property value is recovered here.
+                if (params && !filters[filterName](_s, this.form[params.field].value)) return false;
+            } else if (params && filters[filterName](_s, params)) {
+                return true;
+            } else if (!params && filters[filterName](_s)) {
+                return true;
+            }
+        }
+        return false;
+    },
     validateClasses(_o) {
         const value = _o.value;
         const classes = _o.classes;
         const validations = _o.validations;
-        console.log('value = ', value);
-        console.log('classes = ', classes);
-        console.log('validations = ', validations);
         Object.keys(validations).forEach((key) => {
-            classes[key] = this.validate(value, validations[key]);
+            if (key === 'is-valid') classes[key] = this.isValid(value, validations[key]);
+            else if (key === 'is-invalid') classes[key] = this.isInvalid(value, validations[key]);
         });
         return classes;
     },
