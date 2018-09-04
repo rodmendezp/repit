@@ -7,7 +7,7 @@
                     <label for="id_email">Email</label>
                     <input v-model="form.email.value"
                            :class="form.email.classes"
-                           @input="validateClasses(form.email)"
+                           @input="validateClasses(form.email); checkUser();"
                            ref="email" type="email" name="email" id="id_email"
                            placeholder="your@email" required/>
                 </div>
@@ -44,8 +44,8 @@
                            name="confirm_password" id="id_confirm_password"
                            placeholder="Password Confirmation " required />
                 </div>
-                <div class="align-items-center">
-                    <button type="submit" class="btn btn-primary">SingUp</button>
+                <div class="align-items-center" style="text-align: center">
+                    <button :disabled="mailExists" type="submit" class="btn btn-primary">SingUp</button>
                 </div>
             </form>
         </div>
@@ -64,6 +64,7 @@
         ],
         data() {
             return {
+                mailExists: false,
                 form: {
                     email: {
                         value: '',
@@ -156,6 +157,7 @@
                 this.state = 'idle';
             },
             checkUser() {
+                this.mailExists = false;
                 if (!this.form.email.classes['is-valid']) return;
                 this.loading();
                 const xhr = new XMLHttpRequest();
@@ -163,11 +165,14 @@
                     if (xhr.readyState === 4) {
                         this.idle();
                         if (xhr.status === 302 || xhr.status === 200) {
+                            this.mailExists = true;
                             this.form.email.classes['is-valid'] = false;
                             this.form.email.classes['is-invalid'] = true;
                         }
                     }
                 });
+                xhr.open('GET', `is_user/?email=${this.form.email.value}`);
+                xhr.send();
             },
             onSuccess(message) {
                 this.state = 'success';
@@ -179,7 +184,7 @@
             },
             onSubmit() {
                 this.loading();
-                this.$router.push('');
+                this.$router.push('/');
                 const formData = new FormData();
                 const xhr = new XMLHttpRequest();
                 const fields = this.form;
@@ -187,7 +192,10 @@
                 for (let i = 0; i < fieldNames.length; i += 1) {
                     const fieldName = fieldNames[i];
                     const field = fields[fieldName];
-                    if (!this.validate(field.value, field.validations)) {
+                    if (!this.isValid(field.value, field.validations['is-valid'])) {
+                        console.log('Unexpected form submission. Aborting');
+                    }
+                    if (this.isInvalid(field.value, field.validations['is-invalid'])) {
                         console.log('Unexpected form submission. Aborting');
                     }
                     formData.append(fieldName, field.value);
@@ -228,16 +236,19 @@
 <style lang="sass">
     @import '~@/styles/auth/main.scss';
 
+    .block
+        display: inline-flex
+
     .block label
         display: inline-block
-        width: 140px
+        width: 300px
         text-align: right
         color: white
     .block input
         margin-left: 10px
 
     .register-form
-        max-width: 400px
+        max-width: 600px
         margin-left: auto
         margin-right: auto
 
