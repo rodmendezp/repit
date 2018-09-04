@@ -1,3 +1,11 @@
+@import "node_modules/bootstrap/scss/functions";
+@import "node_modules/bootstrap/scss/variables";
+@import "node_modules/bootstrap/scss/mixins";
+@import "node_modules/bootstrap/scss/reboot";
+@import "node_modules/bootstrap/scss/forms";
+@import "node_modules/bootstrap/scss/buttons";
+
+
 html, body {
     height: 100%;
     background: #6441a4;
@@ -15,5 +23,62 @@ h1, h2 {
 
 .full-width {
     width: 100%;
+}
+
+.align-center {
+    text-align: center;
+}
+
+.align-left {
+    text-align: left;
+}
+
+button.btn-lg {
+    cursor: pointer;
+    padding: 16px 16px;
+    border-radius: 5px;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+button.transparent {
+    background: transparent;
+    border: 2px solid $gray-700;
+    color: $gray-700;
+    &:hover {
+        color: darken($gray-700, 50);
+        border: 2px solid darken($gray-700, 50);
+    }
+}
+
+.form-group {
+    label {
+        font-size: 30px;
+        font-weight: 500;
+    }
+    input {
+        margin-bottom: 10px;
+        padding: 16px;
+        border: 2px solid transparent;
+        &:focus {
+            border: 2px solid;
+        }
+    }
+}
+
+.fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+}
+.fade-enter {
+    opacity: 0;
+}
+.fade-leave, .fade-leave-to {
+    display: none;
+}
+
+p.is-invalid {
+    color: $form-feedback-invalid-color;
+    font-size: 14px;
 }
 
