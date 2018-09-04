@@ -5,6 +5,6 @@ from frontend import views
 urlpatterns = [
     url(r'^$', views.index),
     url(r'^accounts/$', views.auth),
-    # url(r'^accounts/register/', views.User)
+    url(r'^accounts/register/', views.UserCreate.as_view()),
     url(r'^app/$', views.app),
 ]
