@@ -4,6 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Repit</title>
+    <script type="text/javascript">
+        var LOGGED_USER = document.createElement('input');
+        LOGGED_USER.type = 'hidden';
+        LOGGED_USER.name = 'LOGGED_USER';
+        LOGGED_USER.value = '{{ user.first_name }};{{ user.last_name }};{{ user.email }}';
+    </script>
 </head>
 <body>
     <div id="app"></div>
