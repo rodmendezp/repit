@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <title>Repit</title>
     <script type="text/javascript">
-        console.log('creating csrf_input');
         var CSRF_INPUT = document.createElement('input');
         CSRF_INPUT.type = 'hidden';
         CSRF_INPUT.name = 'csrfmiddlewaretoken';
         CSRF_INPUT.value = '{{ csrf_token }}';
-        console.log('created csrf_input');
     </script>
 </head>
 <body>
