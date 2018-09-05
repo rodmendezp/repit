@@ -16,7 +16,9 @@
 
     export default {
         name: 'landing',
-        data() {},
+        data() {
+            return {};
+        },
         components: {
             bButton,
         },
