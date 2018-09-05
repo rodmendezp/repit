@@ -10,20 +10,14 @@ from backend.forms import RegisterForm, LoginEmailForm
 def index(request):
     template_file = 'landing/index.webpack' + ('.dev' if DEBUG else '') + '.html'
     template = loader.get_template(template_file)
-    print('in landing')
-    if request.user and hasattr(request.user, 'first_name'):
-        print(request.user.first_name)
-    else:
-        print('no user')
     response = HttpResponse(template.render({}))
     return response
 
 
-@login_required(redirect_field_name=None, login_url='/accounts')
+@login_required(redirect_field_name=None, login_url='/accounts/')
 def app(request):
     template_file = 'app/index.webpack' + ('.dev' if DEBUG else '') + '.html'
     template = loader.get_template(template_file)
-    print('in app')
     response = HttpResponse(template.render({}, request))
     return response
 
@@ -31,7 +25,6 @@ def app(request):
 def auth(request):
     template_file = 'auth/auth.webpack' + ('.dev' if DEBUG else '') + '.html'
     template = loader.get_template(template_file)
-    print('in auth')
     response = HttpResponse(template.render({}, request))
     return response
 
@@ -39,7 +32,7 @@ def auth(request):
 class AjaxableResponseMixin(object):
     def form_invalid(self, form):
         response = super(AjaxableResponseMixin, self).form_invalid(form)
-        if self.request.is_ajax():
+        if hasattr(self, 'request') and self.request.is_ajax():
             return JsonResponse(form.errors, status=400)
         return response
 
