@@ -12,7 +12,7 @@ class UserManager(DjangoUserManager):
     def create_user(self, username, email=None, password=None, **extra_fields):
         if not email:
             raise ValueError('Users must have an email address')
-        extra_fields.setdefault('is_active', False)
+        extra_fields.setdefault('is_active', True)
         return super(UserManager, self).create_user(username, email, password, **extra_fields)
 
     def create_superuser(self, username, email, password, **extra_fields):
@@ -23,7 +23,7 @@ class UserManager(DjangoUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    username_validator = UnicodeUsernameValidator() if six.PY3 else ASCIIUsernameValidator
+    username_validator = UnicodeUsernameValidator() if six.PY3 else ASCIIUsernameValidator()
     username = models.CharField(ugettext_lazy('username'), max_length=150, unique=True,
                                 help_text='Requires 150 chars or fewer. Letters digits and @/./+/_ only.',
                                 validators=[username_validator],
@@ -34,7 +34,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(ugettext_lazy('last name'), max_length=30, blank=False)
     email = models.EmailField(ugettext_lazy('email address'), unique=True, blank=False)
     is_staff = models.BooleanField(ugettext_lazy('staff status'), default=False)
-    is_active = models.BooleanField(ugettext_lazy('active'), default=False)
+    # TODO: Change is_active default to false when enable email confirmation
+    is_active = models.BooleanField(ugettext_lazy('active'), default=True)
     date_joined = models.DateTimeField(ugettext_lazy('date joined'), default=timezone.now)
 
     objects = UserManager()
@@ -66,10 +67,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     #
     # def send_activation(self, template=None, domain=None):
     #     pass
-
-    def email_user(self, subject, message, **kwargs):
-        
-        pass
 
     class Meta:
         verbose_name = ugettext_lazy('user')
