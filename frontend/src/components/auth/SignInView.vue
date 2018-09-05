@@ -102,7 +102,7 @@
                     console.log('append ', fieldName, ' = ', field.value);
                     formData.append(fieldName, field.value);
                 }
-                formData.append('to', '/');
+                formData.append('to', '/app');
                 console.log(formData);
                 xhr.open('POST', '/accounts/login/', true);
                 /* eslint no-undef: 0 */
