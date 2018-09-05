@@ -45,7 +45,7 @@
                            placeholder="Password Confirmation " required />
                 </div>
                 <div class="align-items-center" style="text-align: center">
-                    <button :disabled="mailExists" type="submit" class="btn btn-primary">SingUp</button>
+                    <button :disabled="mailExists" type="submit" class="btn btn-primary">Sign Up</button>
                 </div>
             </form>
         </div>
