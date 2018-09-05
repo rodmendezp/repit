@@ -4,14 +4,17 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView, SuccessURLAllowedHostsMixin
 from django.views.generic.edit import CreateView
 from Repit.settings import DEBUG
-from repituser.forms import UserForm
-from backend.forms import RegisterForm
+from backend.forms import RegisterForm, LoginEmailForm
 
 
 def index(request):
     template_file = 'landing/index.webpack' + ('.dev' if DEBUG else '') + '.html'
     template = loader.get_template(template_file)
     print('in landing')
+    if request.user and hasattr(request.user, 'first_name'):
+        print(request.user.first_name)
+    else:
+        print('no user')
     response = HttpResponse(template.render({}))
     return response
 
@@ -37,7 +40,6 @@ class AjaxableResponseMixin(object):
     def form_invalid(self, form):
         response = super(AjaxableResponseMixin, self).form_invalid(form)
         if self.request.is_ajax():
-            print('IS AJAX')
             return JsonResponse(form.errors, status=400)
         return response
 
@@ -57,12 +59,7 @@ class UserCreate(AjaxableResponseMixin, SuccessURLAllowedHostsMixin, CreateView)
 
 
 class EmailLoginView(AjaxableResponseMixin, LoginView):
-    form_class = UserForm
+    form_class = LoginEmailForm
     template_name = 'auth/auth.webpack' + ('.dev' if DEBUG else '') + '.html'
     redirect_authenticated_user = True
-    # redirect_field_name = 'to'
-
-    def __init__(self, *args, **kwargs):
-        print('in login')
-
-
+    redirect_field_name = 'to'
