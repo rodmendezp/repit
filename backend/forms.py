@@ -1,7 +1,37 @@
 import uuid
 from django import forms
-from django.utils.translation import ugettext_lazy
 from backend.models import User
+from django.contrib.auth import authenticate
+from django.utils.translation import ugettext_lazy
+from django.contrib.auth.forms import AuthenticationForm
+
+
+class LoginEmailForm(AuthenticationForm):
+    # use email as unique id
+    email = forms.EmailField()
+    # User name is defined automatically later
+    username = None
+    backend = 'backend.auth.EmailBackend'
+
+    def __init__(self, request=None, *args, **kwargs):
+        self.request = request
+        self.user_cache = None
+        super(AuthenticationForm, self).__init__(*args, **kwargs)
+
+    def clean(self):
+        email = self.cleaned_data.get('email')
+        password = self.cleaned_data.get('password')
+
+        if email is not None and password:
+            self.user_cache = authenticate(self.request, email=email, password=password)
+            if self.user_cache is None:
+                raise forms.ValidationError(
+                    self.error_messages['invalid_login'],
+                    code='invalid_login',
+                )
+            else:
+                self.confirm_login_allowed(self.user_cache)
+        return self.cleaned_data
 
 
 class RegisterForm(forms.ModelForm):
@@ -39,9 +69,10 @@ class RegisterForm(forms.ModelForm):
         if not obj.pk:
             obj.username = self.get_unique_username()
         instance = super(RegisterForm, self).save(commit)
-        if not instance.has_usable_password():
-            instance.set_password(self.cleaned_data['password'])
-            instance.save()
+        # TODO: Check why and what for is this condition that was blocking the password hashing
+        # if not instance.has_usable_password():
+        instance.set_password(self.cleaned_data['password'])
+        instance.save()
         # instance.send_activation()
         return instance
 
