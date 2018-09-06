@@ -1,8 +1,10 @@
 from .serializers import HighlightSerializer, TypeSerializer
 from .models import Highlight, Type
 from django.http import Http404
+from datetime import datetime
 from rest_framework import generics, status
 from rest_framework.response import Response
+
 
 
 class TypeList(generics.ListCreateAPIView):
@@ -32,9 +34,19 @@ class HighlightDetail(generics.RetrieveUpdateDestroyAPIView):
             raise Http404
 
     def put(self, request, *args, **kwargs):
-        highlight = self.get_by_pk(kwargs['pk'])
-        serializer = HighlightSerializer(highlight, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        required_fields = ['type_id', 'description', 'start', 'end']
+        for field in required_fields:
+            if not hasattr(request.data, field):
+                return Response(data=None, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            highlight = self.get_by_pk(kwargs['pk'])
+            highlight.user = request.user
+            highlight.type_id = request.data['type_id']
+            highlight.description = request.data['description']
+            highlight.start = request.data['start']
+            highlight.end = request.data['end']
+            highlight.created = datetime.now()
+            highlight.labeled = True
+            highlight.save()
+        except Exception as e:
+            return Response(data=repr(e), status=status.HTTP_400_BAD_REQUEST)
