@@ -13,8 +13,8 @@ class Type(models.Model):
 class Highlight(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)
     video = models.ForeignKey(Video, on_delete=models.DO_NOTHING)
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    type = models.ForeignKey(Type, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, blank=True, null=True)
+    type = models.ForeignKey(Type, on_delete=models.DO_NOTHING, blank=True, null=True)
     description = models.CharField(max_length=255, default='')
     start = models.TimeField()
     end = models.TimeField()
