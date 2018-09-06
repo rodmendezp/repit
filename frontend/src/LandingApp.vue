@@ -2,9 +2,9 @@
     <div class="container-fluid full-height">
         <div class="row full-height align-items-center">
             <div class="col"></div>
-            <div class="col">
+            <div style="text-align: center;" class="col">
                 <h1>Welcome to Repit</h1>
-                <b-button class="btn" @click="signIn">Sign In</b-button>
+                <button class="btn btn-primary" @click="signIn">Sign In</button>
             </div>
             <div class="col"></div>
         </div>
