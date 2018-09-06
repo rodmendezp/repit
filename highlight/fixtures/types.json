@@ -1,0 +1,44 @@
+[
+  {
+    "model": "highlight.Type",
+    "fields": {
+      "name": "Win"
+    }
+  },
+  {
+    "model": "highlight.Type",
+    "fields": {
+      "name": "Fun"
+    }
+  },
+  {
+    "model": "highlight.Type",
+    "fields": {
+      "name": "Fail"
+    }
+  },
+  {
+    "model": "highlight.Type",
+    "fields": {
+      "name": "WTF"
+    }
+  },
+  {
+    "model": "highlight.Type",
+    "fields": {
+      "name": "Donation"
+    }
+  },
+  {
+    "model": "highlight.Type",
+    "fields": {
+      "name": "None"
+    }
+  },
+  {
+    "model": "highlight.Type",
+    "fields": {
+      "name": "Not Sure"
+    }
+  }
+]
