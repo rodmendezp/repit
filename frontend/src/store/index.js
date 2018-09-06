@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import highlight from './modules/highlight';
 
 Vue.use(Vuex);
 
@@ -24,7 +25,9 @@ const store = new Vuex.Store({
     getters,
     actions,
     mutations,
-    modules: {},
+    modules: {
+        highlight,
+    },
 });
 
 const storeConfig = {
@@ -32,7 +35,9 @@ const storeConfig = {
     getters,
     actions,
     mutations,
-    modules: {},
+    modules: {
+        highlight,
+    },
 };
 
 export { store as default, storeConfig };
