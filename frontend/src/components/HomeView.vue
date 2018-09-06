@@ -16,7 +16,7 @@
         name: 'HomeView',
         methods: {
             startLabeling() {
-                this.$router.push('/label/292622008/311/330');
+                this.$router.push('/label/305043183/311/330');
             },
         },
         computed: {
