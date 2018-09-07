@@ -6,7 +6,6 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 
 
-
 class TypeList(generics.ListCreateAPIView):
     queryset = Type.objects.all()
     serializer_class = TypeSerializer
@@ -36,7 +35,7 @@ class HighlightDetail(generics.RetrieveUpdateDestroyAPIView):
     def put(self, request, *args, **kwargs):
         required_fields = ['type_id', 'description', 'start', 'end']
         for field in required_fields:
-            if not hasattr(request.data, field):
+            if not request.data.get(field):
                 return Response(data=None, status=status.HTTP_400_BAD_REQUEST)
         try:
             highlight = self.get_by_pk(kwargs['pk'])
@@ -48,5 +47,6 @@ class HighlightDetail(generics.RetrieveUpdateDestroyAPIView):
             highlight.created = datetime.now()
             highlight.labeled = True
             highlight.save()
+            return Response(status=status.HTTP_200_OK)
         except Exception as e:
             return Response(data=repr(e), status=status.HTTP_400_BAD_REQUEST)
