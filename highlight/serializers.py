@@ -14,6 +14,9 @@ class HighlightSerializer(serializers.ModelSerializer):
     video = VideoSerializer()
     user = UserSerializer()
     type = TypeSerializer()
+    start = serializers.TimeField()
+    end = serializers.TimeField()
+    created = serializers.DateTimeField()
 
     class Meta:
         model = Highlight
