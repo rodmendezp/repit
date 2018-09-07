@@ -7,7 +7,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework import status
 from rest_framework.test import APITestCase
 from twitchdata.models import *
-from highlight.models import *
+from highlight.models import Highlight, Type
 
 
 class HighlightRestAPITest(APITestCase):
