@@ -137,6 +137,8 @@ class GameSerializer(ModelSupportNestedSerializer):
 class VideoSerializer(ModelSupportNestedSerializer):
     streamer = StreamerSerializer(many=False, read_only=False)
     game = GameSerializer(many=False, read_only=False)
+    recorded = serializers.DateTimeField()
+    length = serializers.TimeField()
 
     class Meta:
         model = Video
@@ -147,6 +149,10 @@ class ClipSerializer(ModelSupportNestedSerializer):
     streamer = StreamerSerializer(many=False, read_only=False)
     video = VideoSerializer(many=False, read_only=False)
     creator = TwitchUserSerializer(many=False, read_only=False)
+    offset = serializers.TimeField()
+    duration = serializers.TimeField()
+    created = serializers.DateTimeField()
+    added = serializers.DateTimeField()
 
     class Meta:
         model = Clip
@@ -173,6 +179,7 @@ class ChatSerializer(ModelSupportNestedSerializer):
 class MessageSerializer(ModelSupportNestedSerializer):
     chat = ChatSerializer(many=False, read_only=False)
     twitch_user = TwitchUserSerializer(many=False, read_only=False)
+    time = serializers.TimeField()
 
     class Meta:
         model = Message
