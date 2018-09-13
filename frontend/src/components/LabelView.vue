@@ -15,7 +15,7 @@
                     <label>Type</label>
                     <b-dropdown class="btn-primary" :text="label.type">
                         <b-dropdown-item v-for="labelType in types"
-                                         :key="labelType" :value="labelType" @click="console.log(types)">
+                                         :key="labelType" :value="labelType" @click="label.type = labelType">
                             {{ labelType }}
                         </b-dropdown-item>
                     </b-dropdown>
