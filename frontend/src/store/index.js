@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import highlight from './modules/highlight';
+import player from './modules/player';
 
 Vue.use(Vuex);
 
@@ -27,6 +28,7 @@ const store = new Vuex.Store({
     mutations,
     modules: {
         highlight,
+        player,
     },
 });
 
@@ -37,6 +39,7 @@ const storeConfig = {
     mutations,
     modules: {
         highlight,
+        player,
     },
 };
 
