@@ -25,7 +25,7 @@ SECRET_KEY = 'o+2n0414dl=k53k5(-$w7ck*%1*p9c5h&1&@*@0li^h)4)z9-0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'www.kabara.io', 'kabara.io', 'app.kabara.io', 'admin.kabara.io']
 
 AUTH_USER_MODEL = 'backend.User'
 
@@ -45,10 +45,12 @@ INSTALLED_APPS = [
     'backend.apps.BackendConfig',
     'rest_framework',
     'webpack_loader',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -141,3 +143,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 # Webpack module loader. Set them inside each app.
 WEBPACK_LOADER = {}
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ORIGIN_WHITELIST = (
+    '127.0.0.1:8080'
+)
