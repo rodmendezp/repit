@@ -31,6 +31,8 @@
     };
 </script>
 
-<style lang="sass">
-    @import "~@/styles/app/main.scss"
+<style lang="scss">
+    @import "~@/styles/app/main.scss";
+    $fa-font-path: "~font-awesome/fonts";
+    @import '~font-awesome/scss/font-awesome.scss';
 </style>
