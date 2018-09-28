@@ -13,7 +13,7 @@ export default new Router({
             component: HomeView,
         },
         {
-            path: '/label/:video_id/:st_time/:end_time',
+            path: '/label/',
             name: 'LabelView',
             component: LabelView,
         },
