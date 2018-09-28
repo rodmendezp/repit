@@ -19,6 +19,7 @@
     "font-awesome": "^4.7.0",
     "moment": "^2.22.2",
     "node-sass": "^4.9.3",
+    "reconnecting-websocket": "^4.0.0-rc5",
     "sass": "^1.10.1",
     "sass-loader": "^7.1.0",
     "uuid": "^3.3.2",
