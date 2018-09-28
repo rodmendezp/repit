@@ -15,9 +15,9 @@
     export default {
         name: 'TwitchPlayer',
         props: {
-            videoId: { type: String },
-            stTime: { type: String },
-            endTime: { type: String },
+            videoId: { type: Number },
+            stTime: { type: Number },
+            endTime: { type: Number },
         },
         components: {
             VideoControls,
