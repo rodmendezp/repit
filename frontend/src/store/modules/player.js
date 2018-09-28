@@ -8,7 +8,7 @@ const localState = {
     videoEndTime: 1,
     highlightStartTime: 0,
     highlightEndTime: 1,
-    showTwitchUI: false,
+    showTwitchUI: true,
 };
 
 const getters = {
