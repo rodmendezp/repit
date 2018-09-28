@@ -2,8 +2,6 @@ from rest_framework.serializers import BaseSerializer
 from rest_framework.test import APITestCase
 from rest_framework import status
 from datetime import datetime
-from django.utils import timezone
-from .models import *
 from .views import *
 
 
