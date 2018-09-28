@@ -2,10 +2,10 @@
     <div class="row full-height align-items-center">
         <div class="col"></div>
         <div class="col">
-            <twitch-player
-                :videoId="$route.params.video_id"
-                :stTime="$route.params.st_time"
-                :endTime="$route.params.end_time"></twitch-player>
+            <twitch-player v-if="highlight"
+                :videoId="highlight.video_id"
+                :stTime="highlight.st_time"
+                :endTime="highlight.end_time"></twitch-player>
             <div class="label-form">
                 <div class="form-block">
                     <label>Description</label>
@@ -32,7 +32,7 @@
 </template>
 
 <script>
-    import { mapGetters, mapActions } from 'vuex';
+    import { mapGetters, mapActions, mapMutations } from 'vuex';
     import bDropdownItem from 'bootstrap-vue/es/components/dropdown/dropdown-item';
     import bDropdown from 'bootstrap-vue/es/components/dropdown/dropdown';
     import TwitchPlayer from './player/TwitchPlayer';
@@ -51,14 +51,6 @@
                     type: 'Choose Type',
                 },
                 labelTypes: [],
-                highlight: {
-                    id: null,
-                    start: null,
-                    end: null,
-                    description: null,
-                    type: null,
-                    video: null,
-                },
             };
         },
         methods: {
@@ -66,15 +58,10 @@
                 getTypesDB: 'highlight/getTypesDB',
                 putHighlight: 'highlight/putHighlight',
             }),
-            fillHighlight() {
-                this.highlight.id = this.highlight.id || this.$route.params.id;
-                this.highlight.start = this.highlight.start || this.$route.params.st_time;
-                this.highlight.end = this.highlight.end || this.$route.params.end_time;
-                this.highlight.description = this.label.description;
-                this.highlight.type = this.label.type;
-            },
+            ...mapMutations({
+                setStatus: 'highlight/setStatus',
+            }),
             submitLabel() {
-                this.fillHighlight();
                 if (this.label.type === 'Choose Type') {
                     return;
                 }
@@ -84,10 +71,13 @@
         computed: {
             ...mapGetters({
                 types: 'highlight/getTypes',
+                highlight: 'highlight/getHighlight',
+                webSocket: 'getWebSocket',
             }),
         },
         mounted() {
             if (this.types === null) this.getTypesDB();
+            this.setStatus('idle');
         },
     };
 </script>
