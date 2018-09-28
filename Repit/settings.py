@@ -25,7 +25,7 @@ SECRET_KEY = 'o+2n0414dl=k53k5(-$w7ck*%1*p9c5h&1&@*@0li^h)4)z9-0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'www.kabara.io', 'kabara.io', 'app.kabara.io', 'admin.kabara.io']
+ALLOWED_HOSTS = ['127.0.0.1']
 
 AUTH_USER_MODEL = 'backend.User'
 
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'webpack_loader',
     'corsheaders',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -149,3 +150,15 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = (
     '127.0.0.1:8080'
 )
+
+# Channels Configuration
+ASGI_APPLICATION = 'Repit.routing.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
