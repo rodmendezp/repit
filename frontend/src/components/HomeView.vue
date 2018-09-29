@@ -3,10 +3,10 @@
         <div class="col"></div>
         <div style="text-align: center" class="col" v-if="status === 'idle'">
             <h1 v-if="user"> Welcome {{ user.first_name }}</h1>
-            <div class="start-label-form">
+            <div class="form-group start-label-form">
                 <div class="form-block">
                     <label>Game</label>
-                    <b-dropdown class="btn-primary" :text="labelOptions.game">
+                    <b-dropdown variant="primary" class="btn-primary filler-dropdown" :text="labelOptions.game">
                         <b-dropdown-item v-for="game in games"
                                          :key="game" :value="game" @click="labelOptions.game = game">
                             {{ game }}
@@ -15,7 +15,7 @@
                 </div>
                 <div class="form-block">
                     <label>Streamer</label>
-                    <b-dropdown class="btn-primary" :text="labelOptions.streamer">
+                    <b-dropdown variant="primary" class="btn-primary filler-dropdown" :text="labelOptions.streamer">
                         <b-dropdown-item v-for="streamer in streamers"
                                          :key="streamer" :value="streamer" @click="labelOptions.streamer = streamer">
                             {{ streamer }}
@@ -118,8 +118,25 @@
     };
 </script>
 
-<style lang="sass">
+<style scoped lang="sass">
+    @import '~@/styles/app/main.scss';
+
     .start-label-form
-        text-align: center
+        max-width: 600px
+        margin: 20px auto 30px
+
+    .form-block
+        margin-top: 5px
+        margin-bottom: 5px
+
+    .form-block label
+        display: inline-block
+        width: 100px
+        text-align: right
+        color: white
+
+    .filler-dropdown
+        margin-left: 10px
+        background-color: transparent
 
 </style>
