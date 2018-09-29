@@ -29,6 +29,7 @@
                 seekAtInstantPlay: true,
                 changeStatus: false,
                 iframeTwitch: null,
+                destroying: false,
             };
         },
         computed: {
@@ -43,31 +44,9 @@
         },
         methods: {
             loadScript,
-            checkPlayerTime() {
-                const currTime = this.player.getCurrentTime();
-                if (currTime < this.stTime || currTime > this.endTime) {
-                    this.player.seek(this.stTime);
-                    this.player.pause();
-                }
-            },
-            playSeekLoop() {
-                if (this.seekAtInstantPlay) {
-                    this.player.seek(this.stTime);
-                    this.seekAtInstantPlay = false;
-                } else {
-                    const currTime = this.player.getCurrentTime();
-                    if (currTime < this.stTime || currTime > this.endTime) {
-                        this.player.seek(this.stTime);
-                        this.setVideoTime(this.stTime);
-                        this.setPlaying(false);
-                    } else {
-                        const timeLeft = (Math.round(this.endTime - currTime) + 1) * 1000;
-                        setTimeout(this.checkPlayerTime, timeLeft);
-                    }
-                }
-            },
             playUpdateTimeSeekLoop() {
-                // console.log('playUpdateTimeSeekLoop');
+                // Stop looping if the component is going to be destroyed
+                if (this.destroying) return;
                 // Twitch Player getCurrentTime():Float
                 const currTime = this.player.getCurrentTime();
                 if (this.stTime <= currTime && currTime < this.endTime) {
@@ -111,37 +90,37 @@
                 this.player = new Twitch.Player(`Twitch-Player-${this.uid}`, this.options);
                 this.player.setVolume(1);
                 this.player.addEventListener(Twitch.Player.READY, () => {
-                    console.log('Twitch Player READY');
                     this.iframeTwitch = this.player._bridge._iframe;
                     this.setReady(true);
-                    console.log(Twitch);
                 });
                 this.player.addEventListener(Twitch.Player.PLAY, () => {
-                    console.log('Twitch Player PLAY');
                     this.playUpdateTimeSeekLoop();
                 });
                 this.player.addEventListener(Twitch.Player.PAUSE, () => {
-                    console.log('Twitch Player PAUSE');
+                    // console.log('Twitch Player PAUSE');
                 });
                 this.player.addEventListener(Twitch.Player.PLAYING, () => {
-                    console.log('Twitch Player PLAYING');
+                    // console.log('Twitch Player PLAYING');
                 });
                 this.player.addEventListener(Twitch.Player.VIDEO_READY, () => {
-                    console.log('Twitch Player VIDEO_READY');
+                    // console.log('Twitch Player VIDEO_READY');
                 });
                 this.player.addEventListener(Twitch.Player.PLAYBACK_BLOCKED, () => {
-                    console.log('Twitch Player PLAYBACK_BLOCKED');
+                    // console.log('Twitch Player PLAYBACK_BLOCKED');
                 });
                 this.player.addEventListener(Twitch.Player.ERROR, () => {
-                    console.log('Twitch Player ERROR');
+                    // console.log('Twitch Player ERROR');
                 });
                 this.player.addEventListener(Twitch.Player.ENDED, () => {
-                    console.log('Twitch Player ENDED');
+                    // console.log('Twitch Player ENDED');
                 });
                 this.player.addEventListener(Twitch.Player.PLAYBACK_BLOCKED, () => {
-                    console.log('Twitch Player PLAYBACK_BLOCKED');
+                    // console.log('Twitch Player PLAYBACK_BLOCKED');
                 });
             });
+        },
+        beforeDestroy() {
+            this.destroying = true;
         },
         watch: {
             playing(isPlaying) {
