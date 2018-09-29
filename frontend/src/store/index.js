@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import highlight from './modules/highlight';
 import player from './modules/player';
 import filler from './modules/filler';
+import label from './modules/label';
 
 Vue.use(Vuex);
 
@@ -73,6 +74,7 @@ const store = new Vuex.Store({
         highlight,
         player,
         filler,
+        label,
     },
 });
 
@@ -85,6 +87,7 @@ const storeConfig = {
         highlight,
         player,
         filler,
+        label,
     },
 };
 
