@@ -58,9 +58,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             else:
                 await self.send(text_data=json.dumps({
                     'message': {
-                        'video_id': job_available['video_id'],
-                        'st_time':  job_available['st_time'],
-                        'end_time': job_available['end_time'],
+                        'video_id': int(job_available['video_id']),
+                        'st_time':  int(job_available['st_time']),
+                        'end_time': int(job_available['end_time']),
                     }
                 }))
         else:
