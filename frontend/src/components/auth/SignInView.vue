@@ -111,7 +111,6 @@
 
                 xhr.onreadystatechange = () => {
                     if (xhr.readyState === 4) {
-                        console.log(xhr);
                         const response = JSON.parse(xhr.response);
                         // Redirect to case
                         if (xhr.status === 302) {
