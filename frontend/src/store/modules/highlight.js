@@ -9,6 +9,7 @@ const localState = {
     types: null,
     highlight: null,
     status: 'idle',
+    csrfmiddlewaretoken: '',
 };
 
 const getters = {
@@ -27,14 +28,27 @@ const mutations = {
     setStatus(s, status) {
         s.status = status;
     },
+    setCSRF(s, csrfmiddlewaretoken) {
+        s.csrfmiddlewaretoken = csrfmiddlewaretoken;
+    },
+    setHighlightType(s, type) {
+        s.highlight.type = type;
+    },
 };
 
 const actions = {
-    async postHighlight() {
+    async postHighlight({ state, commit }, data) {
         return new Promise((resolve, reject) => {
+            if (!state.csrfmiddlewaretoken) commit('setCSRF', document.getElementsByName('csrfmiddlewaretoken')[0].value);
             JSONHttpRequest(resolve, reject, 'POST', {
                 baseURL: `${config.baseURL}highlight/`,
-
+                csrfToken: state.csrfmiddlewaretoken,
+                data: {
+                    video: data.video_id,
+                    start: data.st_time,
+                    end: data.end_time,
+                    type: data.type,
+                },
             });
         });
     },
