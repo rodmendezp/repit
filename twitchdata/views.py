@@ -1,6 +1,9 @@
+import json
+
 from twitchdata.serializers import *
 from twitchdata.models import *
-from rest_framework import generics
+from rest_framework import generics, status
+from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination
 
 
@@ -79,6 +82,48 @@ class VideoList(generics.ListCreateAPIView):
         twid = self.request.query_params.get('twid', None)
         queryset = queryset.filter(twid=twid) if twid else queryset
         return queryset
+
+    @staticmethod
+    def get_or_create_user(twid, name):
+        twitch_user, _ = TwitchUser.objects.get_or_create(twid=twid, name=name)
+        return twitch_user
+
+    @staticmethod
+    def get_or_create_channel(twid):
+        channel, _ = Channel.objects.get_or_create(twid=twid)
+        return channel
+
+    @staticmethod
+    def get_or_create_streamer(twid, name):
+        try:
+            return Streamer.objects.get(twitch_user__name=name, channel__twid=twid)
+        except Streamer.DoesNotExist:
+            return Streamer.objects.create(
+                twitch_user=VideoList.get_or_create_user(twid, name),
+                channel=VideoList.get_or_create_channel(twid)
+            )
+
+    @staticmethod
+    def get_or_create_game(twid, name):
+        game, _ = Game.objects.get_or_create(twid=twid, name=name)
+        return game
+
+    def post(self, request, *args, **kwargs):
+        if request.data.get('twid', None) and request.data.get('streamer_twid', None):
+            return self.post_twid(request)
+        else:
+            return super().post(request, *args, **kwargs)
+
+    @staticmethod
+    def post_twid(request):
+        data = request.data
+        twid = data['twid']
+        streamer = VideoList.get_or_create_streamer(data['streamer_twid'], data['streamer_name'])
+        game = VideoList.get_or_create_game(data['game_twid'], data['game_name'])
+        recorded = json.loads(data['recorded'])
+        length = json.loads(data['length'])
+        Video.objects.create(twid=twid, streamer=streamer, game=game, recorded=recorded, length=length)
+        return Response(status=status.HTTP_201_CREATED)
 
 
 class VideoDetail(generics.RetrieveUpdateDestroyAPIView):
