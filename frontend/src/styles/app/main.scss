@@ -32,3 +32,36 @@ h1, h2 {
 .align-left {
     text-align: left;
 }
+
+button.btn-lg {
+    cursor: pointer;
+    padding: 16px 16px;
+    border-radius: 5px;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+button.transparent {
+    background: transparent;
+    border: 2px solid $gray-700;
+    color: $gray-700;
+    &:hover {
+        color: darken($gray-700, 50);
+        border: 2px solid darken($gray-700, 50);
+    }
+}
+
+.form-group {
+    label {
+        font-size: 20px;
+        font-weight: 500;
+    }
+    input {
+        margin-bottom: 10px;
+        border: 2px solid transparent;
+        &:focus {
+            border: 2px solid;
+        }
+    }
+}
