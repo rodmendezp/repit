@@ -4,11 +4,12 @@ const localState = {
     buffered: false,
     seekTime: -1,
     videoTime: 0,
+    videoLength: 1,
     videoStartTime: 0,
     videoEndTime: 1,
-    highlightStartTime: 0,
-    highlightEndTime: 1,
     showTwitchUI: true,
+    extraTimeLeft: 0,
+    extraTimeRight: 0,
 };
 
 const getters = {
@@ -17,11 +18,12 @@ const getters = {
     getBuffered: s => s.buffered,
     getSeekTime: s => s.seekTime,
     getVideoTime: s => s.videoTime,
+    getVideoLength: s => s.videoLength,
     getVideoStartTime: s => s.videoStartTime,
     getVideoEndTime: s => s.videoEndTime,
-    getHighlightStartTime: s => s.highlightStartTime,
-    getHighlightEndTime: s => s.highlightEndTime,
     getShowTwitchUI: s => s.showTwitchUI,
+    getExtraTimeLeft: s => s.extraTimeLeft,
+    getExtraTimeRight: s => s.extraTimeRight,
 };
 
 const mutations = {
@@ -40,20 +42,23 @@ const mutations = {
     setVideoTime(s, videoTime) {
         s.videoTime = videoTime;
     },
+    setVideoLength(s, videoLength) {
+        s.videoLength = videoLength;
+    },
     setVideoStartTime(s, videoStartTime) {
         s.videoStartTime = videoStartTime;
     },
     setVideoEndTime(s, videoEndTime) {
         s.videoEndTime = videoEndTime;
     },
-    setHighlightStartTime(s, highlightStartTime) {
-        s.highlightStartTime = highlightStartTime;
-    },
-    setHighlightEndTime(s, highlightEndTime) {
-        s.highlightEndTime = highlightEndTime;
-    },
     setShowTwitchUI(s, showTwitchUI) {
         s.showTwitchUI = showTwitchUI;
+    },
+    setExtraTimeLeft(s, extraTimeLeft) {
+        s.extraTimeLeft = extraTimeLeft;
+    },
+    setExtraTimeRight(s, extraTimeRight) {
+        s.extraTimeRight = extraTimeRight;
     },
 };
 
@@ -61,6 +66,14 @@ const actions = {
     seekVideo({ commit }, newTime) {
         commit('setBuffered', false);
         commit('setSeekTime', newTime);
+    },
+    playRepitUI({ state, commit }) {
+        if (state.playing) return;
+        commit('setPlaying', true);
+    },
+    pauseRepitUI({ state, commit }) {
+        if (!state.playing) return;
+        commit('setPlaying', false);
     },
 };
 
