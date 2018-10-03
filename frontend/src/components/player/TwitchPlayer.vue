@@ -9,7 +9,7 @@
 
 <script>
     import { loadScript } from '@/mixins/scriptUtils';
-    import { mapGetters, mapMutations } from 'vuex';
+    import { mapGetters, mapMutations, mapActions } from 'vuex';
     import VideoControls from './VideoControls';
 
     export default {
@@ -36,7 +36,11 @@
             ...mapGetters({
                 playing: 'player/getPlaying',
                 seekTime: 'player/getSeekTime',
+                videoTime: 'player/getVideoTime',
+                videoStartTime: 'player/getVideoStartTime',
+                videoEndTime: 'player/getVideoEndTime',
                 showTwitchUI: 'player/getShowTwitchUI',
+                videoInfo: 'twitchdata/getVideoInfo',
             }),
             uid() {
                 return this._uid;
@@ -49,12 +53,12 @@
                 if (this.destroying) return;
                 // Twitch Player getCurrentTime():Float
                 const currTime = this.player.getCurrentTime();
-                if (this.stTime <= currTime && currTime < this.endTime) {
+                if (this.videoStartTime <= currTime && currTime < this.videoEndTime) {
                     this.setVideoTime(currTime);
                     setTimeout(this.playUpdateTimeSeekLoop, 100);
                 } else {
-                    this.player.seek(this.stTime);
-                    this.setVideoTime(this.stTime);
+                    this.player.seek(this.videoStartTime);
+                    this.setVideoTime(this.videoStartTime);
                     this.setPlaying(false);
                 }
             },
@@ -68,13 +72,26 @@
                 }
                 return timeString;
             },
+            timeStringToSecs(timeString) {
+                let seconds = 0;
+                for (let i = 0; i < 3; i += 1) {
+                    seconds += parseInt(timeString.substring(3 * i, (3 * i) + 2), 10) * (60 ** (2 - i));
+                }
+                return seconds;
+            },
             ...mapMutations({
                 setReady: 'player/setReady',
                 setPlaying: 'player/setPlaying',
                 setSeekTime: 'player/setSeekTime',
                 setVideoTime: 'player/setVideoTime',
+                setVideoLength: 'player/setVideoLength',
                 setVideoStartTime: 'player/setVideoStartTime',
                 setVideoEndTime: 'player/setVideoEndTime',
+            }),
+            ...mapActions({
+                playRepitUI: 'player/playRepitUI',
+                pauseRepitUI: 'player/pauseRepitUI',
+                seekVideo: 'player/seekVideo',
             }),
         },
         mounted() {
@@ -82,6 +99,7 @@
             this.options.time = this.secondsToTimeString(this.stTime);
             if (!this.showTwitchUI) this.options.controls = false;
             this.options.autoplay = false;
+            if (this.videoInfo !== null) this.setVideoLength(this.timeStringToSecs(this.videoInfo.length));
             this.setVideoTime(parseFloat(this.stTime));
             this.setVideoStartTime(parseFloat(this.stTime));
             this.setVideoEndTime(parseFloat(this.endTime));
@@ -94,13 +112,17 @@
                     this.setReady(true);
                 });
                 this.player.addEventListener(Twitch.Player.PLAY, () => {
+                    this.playRepitUI();
                     this.playUpdateTimeSeekLoop();
+                    console.log('Twitch Player PLAY');
                 });
                 this.player.addEventListener(Twitch.Player.PAUSE, () => {
-                    // console.log('Twitch Player PAUSE');
+                    this.pauseRepitUI();
+                    console.log('Twitch Player PAUSE');
                 });
                 this.player.addEventListener(Twitch.Player.PLAYING, () => {
-                    // console.log('Twitch Player PLAYING');
+                    // this.playRepitUI();
+                    console.log('Twitch Player PLAYING');
                 });
                 this.player.addEventListener(Twitch.Player.VIDEO_READY, () => {
                     // console.log('Twitch Player VIDEO_READY');
@@ -136,19 +158,25 @@
                 }
             },
             showTwitchUI(show) {
-                if (show) {
-                    this.iframeTwitch.src = this.iframeTwitch.src.replace('&!controls', '');
-                } else {
-                    this.iframeTwitch.src += '&!controls';
-                }
+                this.iframeTwitch.src = show ?
+                    this.iframeTwitch.src.replace('&!controls', '') : `${this.iframeTwitch.src}&!controls`;
+            },
+            videoInfo() {
+                if (this.videoInfo !== null) this.setVideoLength(this.timeStringToSecs(this.videoInfo.length));
+            },
+            videoStartTime() {
+                if (this.videoStartTime > this.videoTime) this.seekVideo(this.videoStartTime);
+            },
+            videoEndTime() {
+                if (this.videoTime > this.videoEndTime) this.seekVideo(this.videoEndTime);
             },
         },
     };
 </script>
 
 <style lang="sass">
-    .twitch-player
-        width: 400px
-        height: 400px
+    /*.twitch-player*/
+        /*width: 400px*/
+        /*height: 400px*/
 
 </style>
