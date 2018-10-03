@@ -2,6 +2,7 @@
     <div class="seek-bar-container">
         <div>
             <div class="progress-bar-container">
+                <div class="candidate-bar" :style="`margin-left: ${candidateBarLeft}; width: ${candidateBarWidth}`"></div>
                 <div class="progress-bar"></div>
             </div>
             <div class="thumb-container" ref="thumbContainer"
@@ -33,10 +34,25 @@
                 videoTime: 'player/getVideoTime',
                 videoStartTime: 'player/getVideoStartTime',
                 videoEndTime: 'player/getVideoEndTime',
+                extraTimeRight: 'player/getExtraTimeRight',
+                extraTimeLeft: 'player/getExtraTimeLeft',
+                videoInfo: 'twitchdata/getVideoInfo',
             }),
             thumbLeftPercentage() {
-                const percent = ((this.inputTime - this.videoStartTime) * 100) / (this.videoEndTime - this.videoStartTime);
+                let percent = 0;
+                if (this.mouseDown) {
+                    percent = (100 * (this.mouseTime - (this.videoStartTime - this.extraTimeLeft))) / this.totalTime;
+                } else percent = (100 * (this.inputTime - (this.videoStartTime - this.extraTimeLeft))) / this.totalTime;
                 return `${percent}%`;
+            },
+            totalTime() {
+                return (this.videoEndTime - this.videoStartTime) + (this.extraTimeLeft + this.extraTimeRight);
+            },
+            candidateBarLeft() {
+                return `${100 * ((this.extraTimeLeft) / this.totalTime)}%`;
+            },
+            candidateBarWidth() {
+                return `${100 * ((this.videoEndTime - this.videoStartTime) / this.totalTime)}%`;
             },
         },
         methods: {
@@ -47,10 +63,12 @@
                     e.pageX - this.$refs.thumbContainer.getBoundingClientRect().left;
                 const minOffset = 0;
                 const maxOffset = this.$refs.thumbContainer.clientWidth;
-                x = x >= minOffset ? x : minOffset;
-                x = x > maxOffset ? maxOffset : x;
-                this.mouseTime = ((x) / (maxOffset - minOffset)) * (this.videoEndTime - this.videoStartTime);
-                this.mouseTime += this.videoStartTime;
+                const stOffset = maxOffset * (this.extraTimeLeft / this.totalTime);
+                const endOffset = maxOffset * ((this.totalTime - this.extraTimeRight) / this.totalTime);
+                x = x >= stOffset ? x : stOffset;
+                x = x > endOffset ? endOffset : x;
+                this.mouseTime = ((x) / (maxOffset - minOffset)) * this.totalTime;
+                this.mouseTime += this.videoStartTime - this.extraTimeLeft;
                 if (this.pressed) this.inputTime = this.mouseTime;
             },
             mouseOverContainer() {
@@ -75,6 +93,7 @@
                 seekVideo: 'player/seekVideo',
             }),
         },
+        mounted() {},
         watch: {
             videoTime() {
                 if (!this.mouseDown) this.inputTime = this.videoTime;
@@ -119,6 +138,11 @@
             background: rgba(255,255,255,0.3)
             width: 100%
             height: 6px
+            
+        .candidate-bar
+            background: #ffb300
+            height: 6px
+            position: absolute
 
     .thumb-container
         height: $thumb-height
