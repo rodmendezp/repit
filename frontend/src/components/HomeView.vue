@@ -85,6 +85,7 @@
                     setTimeout(this.startLabeling, 5000);
                 } else {
                     this.setHighlight(message.message);
+                    this.requestSetVideoInfo(message.message.video_id);
                     this.$router.push('/label/');
                 }
             },
@@ -95,10 +96,12 @@
                 setWebSocket: 'setWebSocket',
                 setHighlight: 'highlight/setHighlight',
                 setStatus: 'highlight/setStatus',
+                setVideoInfo: 'twitchdata/setVideoInfo',
             }),
             ...mapActions({
-                getFillerGames: 'filler/getFillerGames',
-                getFillerStreamers: 'filler/getFillerStreamers',
+                requestSetFillerGames: 'filler/requestSetFillerGames',
+                requestSetFillerStreamers: 'filler/requestSetFillerStreamers',
+                requestSetVideoInfo: 'twitchdata/requestSetVideoInfo',
             }),
         },
         computed: {
@@ -112,8 +115,8 @@
         },
         mounted() {
             this.connectToWebSocket();
-            if (this.games === null) this.getFillerGames();
-            if (this.streamers === null) this.getFillerStreamers();
+            if (this.games === null) this.requestSetFillerGames();
+            if (this.streamers === null) this.requestSetFillerStreamers();
         },
     };
 </script>
