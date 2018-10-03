@@ -34,6 +34,12 @@ const mutations = {
     setHighlightType(s, type) {
         s.highlight.type = type;
     },
+    setHighlightStart(s, start) {
+        s.highlight.st_time = start;
+    },
+    setHighlightEnd(s, end) {
+        s.highlight.end_time = end;
+    },
 };
 
 const actions = {
