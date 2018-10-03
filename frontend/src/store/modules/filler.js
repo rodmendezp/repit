@@ -24,14 +24,14 @@ const mutations = {
 };
 
 const actions = {
-    async getFillerGames({ commit }) {
+    async requestSetFillerGames({ commit }) {
         return new Promise((resolve, reject) => {
             GetHttpRequest(resolve, reject, `${config.baseURL}games/`);
         }).then((response) => {
             commit('setGames', response.map(x => x.name));
         });
     },
-    async getFillerStreamers({ commit }) {
+    async requestSetFillerStreamers({ commit }) {
         return new Promise((resolve, reject) => {
             GetHttpRequest(resolve, reject, `${config.baseURL}streamers`);
         }).then((response) => {
