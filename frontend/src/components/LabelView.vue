@@ -5,25 +5,30 @@
             <twitch-player v-if="highlight"
                 :videoId="highlight.video_id"
                 :stTime="highlight.st_time"
-                :endTime="highlight.end_time"></twitch-player>
+                :endTime="highlight.end_time"
+            ></twitch-player>
             <div class="label-form">
-                <div class="form-block">
-                    <label>Description</label>
-                    <input v-model="label.description"/>
-                </div>
-                <div class="form-block">
-                    <label>Type</label>
-                    <b-dropdown variant="primary" class="btn-primary type-dropdown" :text="label.type">
-                        <b-dropdown-item v-for="labelType in types"
-                                         :key="labelType" :value="labelType" @click="setType(labelType)">
-                            {{ labelType }}
-                        </b-dropdown-item>
-                    </b-dropdown>
-                </div>
-                <div>
-                    <label>Keep Labeling?</label>
-                    <input type="checkbox" :checked="keepLabeling" @input="keepLabelingCheckboxInput"/>
-                </div>
+                <table class="table-form">
+                    <tr class="height-tr">
+                        <td class="left-td"><label for="id_description">Description</label></td>
+                        <td class="left-td"><input v-model="label.description" id="id_description"/></td>
+                    </tr>
+                    <tr class="height-tr">
+                        <td class="left-td"><label>Type</label></td>
+                        <td>
+                            <b-dropdown variant="primary" class="btn-primary type-dropdown" :text="label.type">
+                                <b-dropdown-item class="type-dropdown-item" v-for="labelType in types" :key="labelType"
+                                                 :value="labelType" @click="setType(labelType)">
+                                    {{ labelType }}
+                                </b-dropdown-item>
+                            </b-dropdown>
+                        </td>
+                    </tr>
+                    <tr class="height-tr">
+                        <td class="left-td"><label for="id_keep_labeling">Keep Labeling</label></td>
+                        <td><input type="checkbox" :checked="keepLabeling" @input="keepLabelingCheckboxInput" id="id_keep_labeling"/></td>
+                    </tr>
+                </table>
                 <button class="btn btn-primary" @click="submitLabel">Submit</button>
             </div>
         </div>
@@ -65,14 +70,20 @@
                 setStatus: 'highlight/setStatus',
                 setKeepLabeling: 'label/setKeepLabeling',
                 setHighlightType: 'highlight/setHighlightType',
+                setHighlightStart: 'highlight/setHighlightStart',
+                setHighlightEnd: 'highlight/setHighlightEnd',
             }),
             submitLabel() {
                 if (this.label.type === 'Choose Type') return;
+                this.setHighlightStart(this.videoStartTime);
+                this.setHighlightEnd(this.videoEndTime);
                 this.postHighlight(this.highlight);
-                this.setStatus('processing');
-                this.webSocket.send(JSON.stringify({
-                    message: 'GET_HIGHLIGHT',
-                }));
+                if (this.keepLabeling) {
+                    this.setStatus('processing');
+                    this.webSocket.send(JSON.stringify({
+                        message: 'GET_HIGHLIGHT',
+                    }));
+                }
                 this.$router.push('/');
             },
             keepLabelingCheckboxInput() {
@@ -90,6 +101,8 @@
                 status: 'highlight/getStatus',
                 highlight: 'highlight/getHighlight',
                 keepLabeling: 'label/getKeepLabeling',
+                videoStartTime: 'player/getVideoStartTime',
+                videoEndTime: 'player/getVideoEndTime',
             }),
         },
         mounted() {
@@ -101,18 +114,32 @@
 
 <style scoped lang="sass">
     .label-form
+        margin-top: 90px
         text-align: center
 
-    .label-form label
-        display: inline-block
-        width: 150px
-        text-align: right
-        color: white
+    .table-form
+        margin: 0 auto 20px
 
-    .label-form input
-        margin-left: 10px
-        border: 2px solid transparent
+    .left-td
+        text-align: left
+
+    .height-tr
+        height: 40px
+
+    label
+        color: white
+        margin-bottom: 0
 
     .type-dropdown
         background-color: transparent
+
+    .form-block
+        margin-top: 5px
+        margin-bottom: 5px
+
+    .form-block label
+        display: inline-block
+        width: 100px
+        text-align: right
+        color: white
 </style>
