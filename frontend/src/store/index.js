@@ -4,6 +4,7 @@ import highlight from './modules/highlight';
 import player from './modules/player';
 import filler from './modules/filler';
 import label from './modules/label';
+import twitchdata from './modules/twitchdata';
 
 Vue.use(Vuex);
 
@@ -75,21 +76,9 @@ const store = new Vuex.Store({
         player,
         filler,
         label,
+        twitchdata,
     },
 });
 
-const storeConfig = {
-    state,
-    getters,
-    actions,
-    mutations,
-    modules: {
-        highlight,
-        player,
-        filler,
-        label,
-    },
-};
-
-export { store as default, storeConfig };
+export { store as default };
 export { JSONHttpRequest, GetHttpRequest };
