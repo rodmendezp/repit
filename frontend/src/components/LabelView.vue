@@ -65,6 +65,7 @@
             ...mapActions({
                 getTypesDB: 'highlight/getTypesDB',
                 postHighlight: 'highlight/postHighlight',
+                requestPostJobAck: 'filler/requestPostJobAck',
             }),
             ...mapMutations({
                 setStatus: 'highlight/setStatus',
@@ -72,12 +73,15 @@
                 setHighlightType: 'highlight/setHighlightType',
                 setHighlightStart: 'highlight/setHighlightStart',
                 setHighlightEnd: 'highlight/setHighlightEnd',
+                setDeliveryTag: 'filler/setDeliveryTag',
             }),
             submitLabel() {
                 if (this.label.type === 'Choose Type') return;
                 this.setHighlightStart(this.videoStartTime);
                 this.setHighlightEnd(this.videoEndTime);
                 this.postHighlight(this.highlight);
+                this.requestPostJobAck();
+                this.setDeliveryTag(null);
                 if (this.keepLabeling) {
                     this.setStatus('processing');
                     this.webSocket.send(JSON.stringify({
