@@ -61,6 +61,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         'video_id': int(job_available['video_id']),
                         'st_time':  int(job_available['st_time']),
                         'end_time': int(job_available['end_time']),
+                        'delivery_tag': int(job_available['delivery_tag'])
                     }
                 }))
         else:
