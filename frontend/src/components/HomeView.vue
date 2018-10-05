@@ -84,6 +84,8 @@
                 } else if (message.message === 'LOADING') {
                     setTimeout(this.startLabeling, 5000);
                 } else {
+                    this.setDeliveryTag(message.message.delivery_tag);
+                    delete message.message.delivery_tag;
                     this.setHighlight(message.message);
                     this.requestSetVideoInfo(message.message.video_id);
                     this.$router.push('/label/');
@@ -97,6 +99,7 @@
                 setHighlight: 'highlight/setHighlight',
                 setStatus: 'highlight/setStatus',
                 setVideoInfo: 'twitchdata/setVideoInfo',
+                setDeliveryTag: 'filler/setDeliveryTag',
             }),
             ...mapActions({
                 requestSetFillerGames: 'filler/requestSetFillerGames',
