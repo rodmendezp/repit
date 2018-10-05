@@ -1,4 +1,4 @@
-import { GetHttpRequest } from '../index';
+import { GetHttpRequest, JSONHttpRequest } from '../index';
 
 const config = {
     baseURL: 'http://127.0.0.1:9999/filler/',
@@ -7,11 +7,13 @@ const config = {
 const localState = {
     games: null,
     streamers: null,
+    deliveryTag: null,
 };
 
 const getters = {
     getGames: s => s.games,
     getStreamers: s => s.streamers,
+    getDeliveryTag: s => s.deliveryTag,
 };
 
 const mutations = {
@@ -20,6 +22,9 @@ const mutations = {
     },
     setStreamers(s, streamers) {
         s.streamers = streamers;
+    },
+    setDeliveryTag(s, deliveryTag) {
+        s.deliveryTag = deliveryTag;
     },
 };
 
@@ -36,6 +41,16 @@ const actions = {
             GetHttpRequest(resolve, reject, `${config.baseURL}streamers`);
         }).then((response) => {
             commit('setStreamers', response.map(x => x.name));
+        });
+    },
+    async requestPostJobAck({ state }) {
+        return new Promise((resolve, reject) => {
+            JSONHttpRequest(resolve, reject, 'POST', {
+                baseURL: `${config.baseURL}jobs_available/`,
+                data: {
+                    delivery_tag: state.deliveryTag,
+                },
+            });
         });
     },
 };
