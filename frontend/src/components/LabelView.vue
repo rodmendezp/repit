@@ -86,6 +86,11 @@
                     this.setStatus('processing');
                     this.webSocket.send(JSON.stringify({
                         message: 'GET_HIGHLIGHT',
+                        params: {
+                            game: this.game,
+                            streamer: this.streamer !== null ? this.streamer : '',
+                            user: this.streamer !== null ? this.user : '',
+                        },
                     }));
                 }
                 this.$router.push('/');
@@ -105,6 +110,9 @@
                 status: 'highlight/getStatus',
                 highlight: 'highlight/getHighlight',
                 keepLabeling: 'label/getKeepLabeling',
+                game: 'label/getGame',
+                streamer: 'label/getStreamer',
+                user: 'label/getUser',
                 videoStartTime: 'player/getVideoStartTime',
                 videoEndTime: 'player/getVideoEndTime',
             }),
