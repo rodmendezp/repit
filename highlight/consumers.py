@@ -7,25 +7,45 @@ class FillerAPI:
     def __init__(self):
         self.baseURL = 'http://127.0.0.1:9999/filler/'
 
-    def jobs_available(self):
-        response = requests.get(self.baseURL + 'jobs_available')
+    def jobs_available(self, game, streamer='', user=''):
+        params = {
+            'game': game,
+            'streamer': streamer,
+            'user': user,
+        }
+        response = requests.get(self.baseURL + 'jobs_available', params)
         data = json.loads(response.text)
         if data['jobs_available'] == 'yes':
             return data['job']
         return False
 
-    def filler_status(self):
-        response = requests.get(self.baseURL + 'status')
+    def filler_status(self, game, streamer='', user=''):
+        params = {
+            'game': game,
+            'streamer': streamer,
+            'user': user,
+        }
+        response = requests.get(self.baseURL + 'status', params)
         data = json.loads(response.text)
         return data['status_short']
 
-    def request_jobs(self):
-        response = requests.get(self.baseURL + 'request_jobs')
+    def request_jobs(self, game, streamer='', user=''):
+        params = {
+            'game': game,
+            'streamer': streamer,
+            'user': user,
+        }
+        response = requests.get(self.baseURL + 'request_jobs', params)
         data = json.loads(response.text)
         return data['request_response']
 
-    def cancel_jobs(self):
-        response = requests.get(self.baseURL + 'cancel_jobs')
+    def cancel_jobs(self, game, streamer='', user=''):
+        params = {
+            'game': game,
+            'streamer': streamer,
+            'user': user,
+        }
+        response = requests.get(self.baseURL + 'cancel_jobs', params)
         data = json.loads(response.text)
         return data['cancel_response']
 
@@ -44,14 +64,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None, bytes_data=None):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
+        params = text_data_json['params']
         print('Recieved Message = ', message)
+        print('Params = ', params)
+        game = self.replace_game_characters(params.get('game', ''))
+        streamer = params.get('streamer', '')
+        user = params.get('user', '')
 
         if message == 'GET_HIGHLIGHT':
-            job_available = self.fillerAPI.jobs_available()
+            job_available = self.fillerAPI.jobs_available(game, streamer, user)
             if not job_available:
-                filler_status = self.fillerAPI.filler_status()
+                filler_status = self.fillerAPI.filler_status(game, streamer, user)
                 if filler_status != 'processing':
-                    self.fillerAPI.request_jobs()
+                    self.fillerAPI.request_jobs(game, streamer, user)
                 await self.send(text_data=json.dumps({
                     'message': 'LOADING'
                 }))
@@ -68,6 +93,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps({
                 'message': 'ERROR'
             }))
+
+    @staticmethod
+    def replace_game_characters(game):
+        game = game.replace(' ', '_')
+        game = game.replace('-', '_')
+        game = game.replace("'", '_')
+        game = game.replace(':', '_')
+        game = game.replace('__', '_')
+        return game.replace('.', '_').lower()
 
 
 
