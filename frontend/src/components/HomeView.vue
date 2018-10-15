@@ -55,8 +55,18 @@
         methods: {
             startLabeling() {
                 this.setStatus('processing');
+                this.setGame(this.labelOptions.game);
+                if (this.labelOptions.streamer !== '---------------') {
+                    this.setStreamer(this.labelOptions.streamer);
+                    this.setUser(this.user.email);
+                }
                 this.webSocket.send(JSON.stringify({
                     message: 'GET_HIGHLIGHT',
+                    params: {
+                        game: this.labelOptions.game,
+                        streamer: this.labelOptions.streamer === '---------------' ? '' : this.labelOptions.streamer,
+                        user: this.labelOptions.streamer === '---------------' ? '' : this.user.email,
+                    },
                 }));
             },
             connectToWebSocket() {
@@ -100,6 +110,9 @@
                 setStatus: 'highlight/setStatus',
                 setVideoInfo: 'twitchdata/setVideoInfo',
                 setDeliveryTag: 'filler/setDeliveryTag',
+                setGame: 'label/setGame',
+                setStreamer: 'label/setStreamer',
+                setUser: 'label/setUser',
             }),
             ...mapActions({
                 requestSetFillerGames: 'filler/requestSetFillerGames',
