@@ -7,7 +7,6 @@ from django.contrib.auth.forms import AuthenticationForm
 
 
 class LoginEmailForm(AuthenticationForm):
-    # use email as unique id
     email = forms.EmailField()
     # User name is defined automatically later
     username = None
@@ -46,13 +45,9 @@ class RegisterForm(forms.ModelForm):
         self.request = request
         super(RegisterForm, self).__init__(*args, **kwargs)
 
-    # TODO: CHANGE THIS, THIS IS KIND OF DUMB
-    def get_unique_username(self):
-        name = str(uuid.uuid1())
-        if User.objects.filter(username=name).count() == 0:
-            return name
-        else:
-            return self.get_unique_username()
+    @staticmethod
+    def get_unique_username():
+        return str(uuid.uuid1())
 
     def clean(self):
         password = self.cleaned_data.get('password')
@@ -69,11 +64,9 @@ class RegisterForm(forms.ModelForm):
         if not obj.pk:
             obj.username = self.get_unique_username()
         instance = super(RegisterForm, self).save(commit)
-        # TODO: Check why and what for is this condition that was blocking the password hashing
-        # if not instance.has_usable_password():
         instance.set_password(self.cleaned_data['password'])
         instance.save()
-        # instance.send_activation()
+        instance.send_activation()
         return instance
 
     class Meta:
