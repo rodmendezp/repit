@@ -1,59 +1,59 @@
 <template>
     <div class="row full-height align-items-center">
-        <div class="col"></div>
-        <div class="col">
-            <form ref="form" method="post" class="form-group register-form" @submit.prevent="onSubmit">
-                <div class="block">
-                    <label for="id_email">Email</label>
-                    <input v-model="form.email.value"
-                           :class="form.email.classes"
-                           @input="validateClasses(form.email); checkUser();"
-                           ref="email" type="email" name="email" id="id_email"
-                           placeholder="your@email" required/>
-                </div>
-                <div class="block">
-                    <label for="id_first_name">First Name</label>
-                    <input v-model="form.first_name.value"
-                           :class="form.first_name.classes"
-                           @input="validateClasses(form.first_name)"
-                           ref="first_name" type="text" name="first_name" id="id_first_name"
-                           placeholder="First Name" required/>
-                </div>
-                <div class="block">
-                    <label for="id_last_name">Last Name</label>
-                    <input v-model="form.last_name.value"
-                           :class="form.last_name.classes"
-                           @input="validateClasses(form.last_name)"
-                           ref="last_name" type="text" name="last_name" id="id_last_name"
-                           placeholder="Last Name" required />
-                </div>
-                <div class="block">
-                    <label for="id_password">Password</label>
-                    <input v-model="form.password.value"
-                           :class="form.password.classes"
-                           @input="validateClasses(form.password); validateClasses(form.confirm_password);"
-                           ref="password" type="password" name="password" id="id_password"
-                           placeholder="Password" required />
-                </div>
-                <div class="block">
-                    <label for="id_confirm_password">Confirm Password</label>
-                    <input v-model="form.confirm_password.value"
-                           :class="form.confirm_password.classes"
-                           @input="validateClasses(form.confirm_password); validateClasses(form.password);"
-                           ref="confirm_password" type="password"
-                           name="confirm_password" id="id_confirm_password"
-                           placeholder="Password Confirmation " required />
-                </div>
-                <div class="align-items-center" style="text-align: center">
-                    <button :disabled="mailExists" type="submit" class="btn btn-primary">Sign Up</button>
-                </div>
-            </form>
-        </div>
-        <div class="col"></div>
+        <form ref="form" method="post" class="form-group register-form" @submit.prevent="onSubmit">
+            <div class="block">
+                <label for="id_email">Email</label>
+                <input v-model="form.email.value"
+                       :class="form.email.classes"
+                       @input="validateClasses(form.email); checkUser();"
+                       ref="email" type="email" name="email" id="id_email"
+                       placeholder="your@email" required/>
+            </div>
+            <div class="mail-error-container" v-if="form.email.classes['is-invalid']">
+                <div class="mail-error">Email is invalid or already taken</div>
+            </div>
+            <div class="block">
+                <label for="id_first_name">First Name</label>
+                <input v-model="form.first_name.value"
+                       :class="form.first_name.classes"
+                       @input="validateClasses(form.first_name)"
+                       ref="first_name" type="text" name="first_name" id="id_first_name"
+                       placeholder="First Name" required/>
+            </div>
+            <div class="block">
+                <label for="id_last_name">Last Name</label>
+                <input v-model="form.last_name.value"
+                       :class="form.last_name.classes"
+                       @input="validateClasses(form.last_name)"
+                       ref="last_name" type="text" name="last_name" id="id_last_name"
+                       placeholder="Last Name" required />
+            </div>
+            <div class="block">
+                <label for="id_password">Password</label>
+                <input v-model="form.password.value"
+                       :class="form.password.classes"
+                       @input="validateClasses(form.password); validateClasses(form.confirm_password);"
+                       ref="password" type="password" name="password" id="id_password"
+                       placeholder="Password" required />
+            </div>
+            <div class="block">
+                <label for="id_confirm_password">Confirm Password</label>
+                <input v-model="form.confirm_password.value"
+                       :class="form.confirm_password.classes"
+                       @input="validateClasses(form.confirm_password); validateClasses(form.password);"
+                       ref="confirm_password" type="password"
+                       name="confirm_password" id="id_confirm_password"
+                       placeholder="Password Confirmation " required />
+            </div>
+            <div class="align-items-center" style="text-align: center">
+                <button :disabled="submitDisabled()" type="submit" class="btn btn-primary">Sign Up</button>
+            </div>
+        </form>
     </div>
 </template>
 
 <script>
+    import { mapMutations } from 'vuex';
     import FormValidation from '@/mixins/formValidation';
     import bButton from 'bootstrap-vue/es/components/button/button';
 
@@ -150,11 +150,21 @@
             bButton,
         },
         methods: {
+            ...mapMutations({
+                setCheckEmail: 'setCheckEmail',
+            }),
             loading() {
                 this.state = 'loading';
             },
             idle() {
                 this.state = 'idle';
+            },
+            submitDisabled() {
+                let disabled = false;
+                Object.keys(this.form).forEach((key) => {
+                    if (this.form[key].value === '' || this.form[key].classes['is-invalid']) disabled = true;
+                });
+                return disabled;
             },
             checkUser() {
                 this.mailExists = false;
@@ -208,8 +218,8 @@
                 xhr.onreadystatechange = () => {
                     if (xhr.readyState === 4) {
                         if (xhr.status === 302 || xhr.status === 200) {
-                            const response = JSON.parse(xhr.response);
-                            console.log(response);
+                            // const response = JSON.parse(xhr.response);
+                            this.setCheckEmail(true);
                             this.onSuccess('Please check your mailbox');
                         }
                     } else {
@@ -251,5 +261,18 @@
         max-width: 600px
         margin-left: auto
         margin-right: auto
+
+    .mail-error-container
+        position: relative
+        width: 0
+        height: 0
+
+    .mail-error
+        position: absolute
+        width: 300px
+        color: #dc3545
+        font-weight: 600
+        top: -45px
+        left: 600px
 
 </style>
