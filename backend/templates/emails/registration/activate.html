@@ -1,0 +1,43 @@
+{% autoescape off %}
+    <table style="border:0; margin-left: auto; margin-right: auto;" cellpadding="0" width="500">
+        <tr>
+            <td style="text-align: center;" colspan="3">
+                <a href="https://repit.io" title="Go to Repit.io">
+                    <img src="" title="repit">
+                </a>
+            </td>
+        </tr>
+        <tr><td height="20" colspan="3"></td></tr>
+        <tr>
+            <td colspan="3">
+                <p style="font-size: 14px; font-family: Arial; color: #444;">Hi {{ user.first_name }}!</p>
+                <p style="font-size: 14px; font-family: Arial; color: #444;">
+                    Please click on <a title="Verify my account" style="font-weight: 700; color: #0873f4; font-family: Arial; font-size: 14px;" href="http://127.0.0.1:8000.{{ domain }}{% url 'user_activation' uidb64=uid token=token %}?=/accounts/#/login/0">Verify Email</a> to confirm your registration,
+                </p>
+            </td>
+        </tr>
+        <tr><td height="20" colspan="3"></td></tr>
+        <tr>
+            <td width="200"></td>
+            <td style="text-align: center; border-radius: 5px; background: #0873f4;" width="100" height="35">
+                <a title="Verify my account" style="font-weight: 700; color: #eee; font-family: Arial; font-size: 14px;" href="https://app.{{ domain }}{% url 'user_activation' uidb64=uid token=token %}?=/accounts/#/login/0">Verify Email</a>
+            </td>
+            <td width="200"></td>
+        </tr>
+        <tr><td height="20" colspan="3"></td></tr>
+        <tr>
+            <td>
+                <p style="font-size: 14px; font-family: Arial; color: #444;">Best Regards,</p>
+                <p style="font-size: 14px; font-family: Arial; color: #444;">The Repit Team.</p>
+            </td>
+        </tr>
+        <tr><td height="20" colspan="3"></td></tr>
+        <tr>
+            <td style="background: #dedede; color: #777; text-align: center;" height="35" colspan="3">
+                <p style="font-size: 12px; font-family: Arial; color: #444;">
+                    Any Questions? Visit our <a style="color: #0873f4;" href="https://help.repit.io" title="Visit Repit's Help Center">Help Center</a> or send us a note at <a style="color: #0873f4;"  href="mailto:contact@repit.io" title="Send Email to contact@repit.io">contact@repit.io</a>.
+                </p>
+            </td>
+        </tr>
+    </table>
+{% endautoescape %}
