@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'twitchdata.apps.TwitchdataConfig',
     'highlight.apps.HighlightConfig',
     'frontend.apps.FrontendConfig',
@@ -162,3 +163,12 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+# MAIL CONFIRMATION CONFIG
+ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'contact@repit.io')
+SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY',
+                                  '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')
+
+# CONFIG FOR 'django.contrib.sites'
+SITE_ID = 1
+
