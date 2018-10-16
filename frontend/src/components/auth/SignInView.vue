@@ -19,6 +19,9 @@
                            ref="password" type="password" name="password" id="id_password"
                            placeholder="Password" required/>
                 </div>
+                <div v-if="errorLogin" class="error-container">
+                    {{ errorMessage }}
+                </div>
                 <div class="align-items-center" style="text-align: center">
                     <button type="submit" class="btn btn-primary">Sign In</button>
                 </div>
@@ -26,16 +29,24 @@
             <div class="not-account">
                 <p class="p-font">Do not have an account? <router-link class="btn btn-primary" to="signup" tag="button">Sign Up</router-link></p>
             </div>
+            <div class="check-email" v-if="checkEmail">
+                <b-alert show variant="primary">Please check your mailbox</b-alert>
+            </div>
         </div>
         <div class="col"></div>
     </div>
 </template>
 
 <script>
+    import { mapGetters } from 'vuex';
     import FormValidation from '@/mixins/formValidation';
+    import bAlert from 'bootstrap-vue/es/components/alert/alert';
 
     export default {
         name: 'SignInView',
+        components: {
+            bAlert,
+        },
         mixins: [
             FormValidation,
         ],
@@ -67,6 +78,8 @@
                         },
                     },
                 },
+                errorLogin: false,
+                errorMessage: '',
             };
         },
         methods: {
@@ -78,12 +91,10 @@
                 this.state = 'error';
                 this.submitResponse = message;
                 this.form.password.classes['is-invalid'] = true;
+                this.form.email.classes['is-invalid'] = true;
             },
             loading() {
                 this.state = 'loading';
-            },
-            loadingUser() {
-                this.state = 'loading_user';
             },
             onSubmit() {
                 const formData = new FormData();
@@ -119,6 +130,8 @@
                         // Incorrect password case
                         if (xhr.status === 400) {
                             this.onError('Invalid form submission.');
+                            this.errorLogin = true;
+                            this.errorMessage = response.__all__[0];
                         }
                     }
                 };
@@ -134,6 +147,11 @@
                 };
                 xhr.send(formData);
             },
+        },
+        computed: {
+            ...mapGetters({
+                checkEmail: 'getCheckEmail',
+            }),
         },
     };
 </script>
@@ -166,4 +184,15 @@
         bottom: 0
         position: fixed
         text-align: center
+
+    .error-container
+        color: #dc3545
+        font-weight: 600
+        margin-bottom: 10px
+
+    .check-email
+        margin-top: 20px
+        margin-bottom: 20px
+        text-align: center
+        color: white
 </style>
