@@ -30,7 +30,7 @@ class HighlightRestAPITest(APITestCase):
     def create_user():
         User = get_user_model()
         user = User.objects.create(first_name='rodrigo', last_name='mendez', email='rodmendezp@gmail.com')
-        user.set_password('raidri22')
+        user.set_password('rodrigomendez')
         user.save()
         return user
 
@@ -62,7 +62,7 @@ class HighlightRestAPITest(APITestCase):
     def test_put_highlight(self):
         credentials = {
             'email': 'rodmendezp@gmail.com',
-            'password': 'raidri22',
+            'password': 'rodrigomendez',
         }
         self.client.login(**credentials)
         pk = self.highlight.id
