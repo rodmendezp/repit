@@ -90,7 +90,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'repit',
         'USER': 'postgres',
-        'PASSWORD': 'raidri22',
+        'PASSWORD': os.environ.get('POSTGRES_PWD', ''),
         'HOST': 'localhost',
         'PORT': '5432',
     }
