@@ -67,7 +67,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         params = text_data_json['params']
         print('Recieved Message = ', message)
         print('Params = ', params)
-        game = self.replace_game_characters(params.get('game', ''))
+        game = params.get('game', '')
         streamer = params.get('streamer', '')
         user = params.get('user', '')
 
