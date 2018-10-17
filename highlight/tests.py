@@ -28,8 +28,7 @@ class HighlightRestAPITest(APITestCase):
 
     @staticmethod
     def create_user():
-        User = get_user_model()
-        user = User.objects.create(first_name='rodrigo', last_name='mendez', email='rodmendezp@gmail.com')
+        user = get_user_model().objects.create(first_name='rodrigo', last_name='mendez', email='rodmendezp@gmail.com')
         user.set_password('rodrigomendez')
         user.save()
         return user
