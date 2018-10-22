@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'webpack_loader',
     'corsheaders',
     'channels',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
