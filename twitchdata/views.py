@@ -41,9 +41,6 @@ class ChannelList(generics.ListCreateAPIView):
         queryset = queryset.filter(twid=twid) if twid else queryset
         return queryset
 
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
-
 
 class ChannelDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Channel.objects.all()
