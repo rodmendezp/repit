@@ -8,7 +8,7 @@
                     <label>Game</label>
                     <b-dropdown variant="primary" class="btn-primary filler-dropdown" :text="labelOptions.game">
                         <b-dropdown-item v-for="game in games"
-                                         :key="game" :value="game" @click="labelOptions.game = game">
+                                         :key="game" :value="game" @click="gameSelected(game)">
                             {{ game }}
                         </b-dropdown-item>
                     </b-dropdown>
@@ -16,8 +16,8 @@
                 <div class="form-block">
                     <label>Streamer</label>
                     <b-dropdown variant="primary" class="btn-primary filler-dropdown" :text="labelOptions.streamer">
-                        <b-dropdown-item v-for="streamer in streamers"
-                                         :key="streamer" :value="streamer" @click="labelOptions.streamer = streamer">
+                        <b-dropdown-item v-for="streamer in defaultAndGameStreamers"
+                                         :key="streamer" :value="streamer" @click="streamerSelected(streamer)">
                             {{ streamer }}
                         </b-dropdown-item>
                     </b-dropdown>
@@ -69,6 +69,14 @@
                     },
                 }));
             },
+            gameSelected(game) {
+                this.labelOptions.game = game;
+                this.requestSetGameStreamers(game);
+                this.requestSetGameDefaultsStreamers(game);
+            },
+            streamerSelected(streamer) {
+                this.labelOptions.streamer = streamer;
+            },
             connectToWebSocket() {
                 const socketURL = `ws://${window.location.host}/ws/chat/`;
                 const websocket = new ReconnectingWebSocket(socketURL);
@@ -117,6 +125,8 @@
             ...mapActions({
                 requestSetFillerGames: 'filler/requestSetFillerGames',
                 requestSetFillerStreamers: 'filler/requestSetFillerStreamers',
+                requestSetGameStreamers: 'filler/requestSetGameStreamers',
+                requestSetGameDefaultsStreamers: 'filler/requestSetGameDefaultsStreamers',
                 requestSetVideoInfo: 'twitchdata/requestSetVideoInfo',
             }),
         },
@@ -127,7 +137,20 @@
                 status: 'highlight/getStatus',
                 games: 'filler/getGames',
                 streamers: 'filler/getStreamers',
+                gameStreamers: 'filler/getGameStreamers',
             }),
+            defaultAndGameStreamers() {
+                const allStreamers = [];
+                if (this.streamers) {
+                    for (let i = 0; i < this.streamers.length; i += 1) allStreamers.push(this.streamers[i]);
+                }
+                if (this.gameStreamers) {
+                    for (let i = 0; i < this.gameStreamers.length; i += 1) {
+                        allStreamers.push(this.gameStreamers[i]);
+                    }
+                }
+                return allStreamers;
+            },
         },
         mounted() {
             this.connectToWebSocket();
