@@ -35,6 +35,15 @@ class ChannelList(generics.ListCreateAPIView):
     queryset = Channel.objects.all()
     serializer_class = ChannelSerializer
 
+    def get_queryset(self):
+        queryset = Channel.objects.all()
+        twid = self.request.query_params.get('twid', None)
+        queryset = queryset.filter(twid=twid) if twid else queryset
+        return queryset
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
 
 class ChannelDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Channel.objects.all()
@@ -47,9 +56,12 @@ class StreamerList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         queryset = Streamer.objects.all()
-        streamer_name = self.request.query_params.get('streamer_name', None)
-        queryset = queryset.filter(twitch_user__name=streamer_name) if streamer_name else queryset
+        name = self.request.query_params.get('name', None)
+        queryset = queryset.filter(twitch_user__name=name) if name else queryset
         return queryset
+
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
 
 
 class StreamerDetail(generics.RetrieveUpdateDestroyAPIView):
