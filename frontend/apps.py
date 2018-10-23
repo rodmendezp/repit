@@ -12,8 +12,7 @@ class FrontendConfig(AppConfig):
         self._set_webpack()
 
     def _set_webpack(self):
-        # env = 'dev' if settings.DEGUB else 'prod'
-        env = 'dev'
+        env = 'dev' if settings.DEGUB else 'prod'
 
         settings.WEBPACK_LOADER['REPIT'] = {
             'BUNDLE_DIR_NAME': self.name + '/',
