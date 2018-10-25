@@ -1,5 +1,4 @@
 sendgrid
-channels
 astroid==2.0.2
 certifi==2018.4.16
 chardet==3.0.4
