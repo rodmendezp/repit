@@ -4,20 +4,9 @@ const utils = require('./utils')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
 
-function resolve (dir) {
-  return path.join(__dirname, '..', dir)
+function resolve(dir) {
+    return path.join(__dirname, '..', dir)
 }
-
-const createLintingRule = () => ({
-    test: /\.(js|vue)$/,
-    loader: 'eslint-loader',
-    enforce: 'pre',
-    include: [resolve('src'), resolve('test')],
-    options: {
-        formatter: require('eslint-friendly-formatter'),
-        emitWarning: !config.dev.showEslintErrorsInOverlay
-    }
-})
 
 module.exports = {
     context: path.resolve(__dirname, '../'),
@@ -26,24 +15,38 @@ module.exports = {
         app: './src/main.js',
         landing: './src/landing.js',
     },
+    node: {
+        fs: 'empty',
+        child_process: 'empty'
+    },
     output: {
         path: config.build.assetsRoot,
         filename: '[name].js',
         publicPath: process.env.NODE_ENV === 'production'
-          ? config.build.assetsPublicPath
-          : config.dev.assetsPublicPath
+            ? config.build.assetsPublicPath
+            : config.dev.assetsPublicPath
     },
     resolve: {
-        extensions: ['.js', '.vue', '.json', '.svg'],
+        extensions: ['.js', '.vue', '.json', '.pro.js', '.svg'],
         alias: {
-          'vue$': 'vue/dist/vue.esm.js',
-          '@': resolve('src'),
-          Lib: resolve('src/lib'),
+            'vue$': 'vue/dist/vue.esm.js',
+            '@': resolve('src'),
+            Lib: resolve('src/lib'),
         }
     },
+    plugins: [],
     module: {
         rules: [
-            ...(config.dev.useEslint ? [createLintingRule()] : []),
+            {
+                test: /\.(js|vue)$/,
+                loader: 'eslint-loader',
+                enforce: 'pre',
+                include: [resolve('src'), resolve('test')],
+                exclude: /(node_modules|bower_components|src\/lib|lib)/,
+                options: {
+                    formatter: require('eslint-friendly-formatter')
+                }
+            },
             {
                 test: /\.vue$/,
                 loader: 'vue-loader',
@@ -60,8 +63,15 @@ module.exports = {
                     resolve('src'),
                     resolve('test'),
                     resolve('bootstrap-vue'),
-                    resolve('node_modules/webpack-dev-server/client')
-                ]
+                ],
+                exclude: /(node_modules|bower_components|src\/lib|lib)/,
+            },
+            {
+                test: /\.pro\.js$/,
+                loader: process.env.NODE_ENV === 'production' ? 'babel-loader' : 'null-loader',
+                include: [
+                    resolve('src/lib'),
+                ],
             },
             {
                 test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -72,33 +82,35 @@ module.exports = {
                 }
             },
             {
-            test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
-            loader: 'url-loader',
-            options: {
-                limit: 10000,
-                name: utils.assetsPath('media/[name].[hash:7].[ext]')
-            }
+                test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
+                loader: 'url-loader',
+                options: {
+                    limit: 10000,
+                    name: utils.assetsPath('media/[name].[hash:7].[ext]')
+                }
             },
             {
-            test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-            loader: 'url-loader',
+                test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+                loader: 'url-loader',
                 options: {
                     limit: 10000,
                     name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
                 }
+            },
+            {
+                test: /\.ts$/,
+                use: [{
+                    loader: 'ts-loader',
+                    options: {
+                        compilerOptions: {
+                            declaration: false,
+                            target: 'es5',
+                            module: 'commonjs'
+                        },
+                        transpileOnly: true
+                    }
+                }]
             }
-        ]
+        ],
     },
-    node: {
-        // prevent webpack from injecting useless setImmediate polyfill because Vue
-        // source contains it (although only uses it if it's native).
-        setImmediate: false,
-        // prevent webpack from injecting mocks to Node native modules
-        // that does not make sense for the client
-        dgram: 'empty',
-        fs: 'empty',
-        net: 'empty',
-        tls: 'empty',
-        child_process: 'empty'
-    }
 }
