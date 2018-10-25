@@ -1,18 +1,15 @@
-'use strict'
-const path = require('path')
-const utils = require('./utils')
-const webpack = require('webpack')
-const config = require('../config')
-const merge = require('webpack-merge')
-const baseWebpackConfig = require('./webpack.base.conf')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
-const BundleTracker = require('webpack-bundle-tracker')
+'use strict';
+const path = require('path');
+const utils = require('./utils');
+const webpack = require('webpack');
+const config = require('../config');
+const merge = require('webpack-merge');
+const baseWebpackConfig = require('./webpack.base.conf');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
+const BundleTracker = require('webpack-bundle-tracker');
 
-const env = process.env.NODE_ENV === 'testing'
-    ? require('../config/test.env')
-    : config.build.env
+const env = process.env.NODE_ENV === 'testing' ? require('../config/test.env') : config.build.env;
 
 const webpackConfig = merge(baseWebpackConfig, {
     module: {
@@ -84,19 +81,12 @@ const webpackConfig = merge(baseWebpackConfig, {
             minChunks: 3
         }),
         // copy custom static assets
-        new CopyWebpackPlugin([
-            {
-                from: path.resolve(__dirname, '../static'),
-                to: config.build.assetsSubDirectory,
-                ignore: ['.*']
-            }
-        ]),
         new BundleTracker({filename: './webpack-stats.prod.json'})
     ]
-})
+});
 
 if (config.build.productionGzip) {
-    const CompressionWebpackPlugin = require('compression-webpack-plugin')
+    const CompressionWebpackPlugin = require('compression-webpack-plugin');
 
     webpackConfig.plugins.push(
         new CompressionWebpackPlugin({
@@ -114,8 +104,8 @@ if (config.build.productionGzip) {
 }
 
 if (config.build.bundleAnalyzerReport) {
-    const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+    const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
     webpackConfig.plugins.push(new BundleAnalyzerPlugin())
 }
 
-module.exports = webpackConfig
+module.exports = webpackConfig;
