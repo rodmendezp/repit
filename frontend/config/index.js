@@ -45,6 +45,7 @@ module.exports = {
 
   build: {
     // Template for index.html
+    env: require('./prod.env'),
     index: path.resolve(__dirname, '../dist/index.html'),
 
     // Paths
