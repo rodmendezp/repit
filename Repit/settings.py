@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'webpack_loader',
     'corsheaders',
-    'channels',
     'django_extensions',
 ]
 
@@ -153,18 +152,6 @@ CORS_ORIGIN_WHITELIST = (
     '127.0.0.1:8080'
 )
 
-# Channels Configuration
-ASGI_APPLICATION = 'Repit.routing.application'
-
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
-        },
-    },
-}
-
 # MAIL CONFIRMATION CONFIG
 ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'contact@repit.io')
 SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY',
@@ -173,3 +160,4 @@ SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY',
 # CONFIG FOR 'django.contrib.sites'
 SITE_ID = 1
 
+FILLER_IP = os.environ.get('FILLER_IP', '127.0.0.1:9999')
