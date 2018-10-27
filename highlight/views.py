@@ -14,9 +14,9 @@ def seconds_to_hms(seconds):
     m = int(seconds / 60)
     seconds -= m * 60
     return {
-        'hour': h,
-        'minute': m,
-        'second': seconds
+        'hour': int(h),
+        'minute': int(m),
+        'second': int(seconds)
     }
 
 
