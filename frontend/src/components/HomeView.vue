@@ -36,7 +36,7 @@
     import { mapGetters, mapActions, mapMutations } from 'vuex';
     import bDropdownItem from 'bootstrap-vue/es/components/dropdown/dropdown-item';
     import bDropdown from 'bootstrap-vue/es/components/dropdown/dropdown';
-
+    
     export default {
         name: 'HomeView',
         components: {
