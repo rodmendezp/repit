@@ -6,7 +6,7 @@
             <div class="form-group start-label-form">
                 <div class="form-block">
                     <label>Game</label>
-                    <b-dropdown variant="primary" class="btn-primary filler-dropdown" :text="labelOptions.game">
+                    <b-dropdown variant="primary" class="btn-primary filler-dropdown" :text="gameDropdownText">
                         <b-dropdown-item v-for="game in games"
                                          :key="game" :value="game" @click="gameSelected(game)">
                             {{ game }}
@@ -15,7 +15,7 @@
                 </div>
                 <div class="form-block">
                     <label>Streamer</label>
-                    <b-dropdown variant="primary" class="btn-primary filler-dropdown" :text="labelOptions.streamer">
+                    <b-dropdown variant="primary" class="btn-primary filler-dropdown" :text="streamerDropdownText">
                         <b-dropdown-item v-for="streamer in defaultAndGameStreamers"
                                          :key="streamer" :value="streamer" @click="streamerSelected(streamer)">
                             {{ streamer }}
@@ -36,7 +36,6 @@
     import { mapGetters, mapActions, mapMutations } from 'vuex';
     import bDropdownItem from 'bootstrap-vue/es/components/dropdown/dropdown-item';
     import bDropdown from 'bootstrap-vue/es/components/dropdown/dropdown';
-    import ReconnectingWebSocket from 'reconnecting-websocket';
 
     export default {
         name: 'HomeView',
@@ -47,8 +46,8 @@
         data() {
             return {
                 labelOptions: {
-                    game: '---------------',
-                    streamer: '---------------',
+                    game: null,
+                    streamer: null,
                 },
             };
         },
@@ -56,18 +55,32 @@
             startLabeling() {
                 this.setStatus('processing');
                 this.setGame(this.labelOptions.game);
-                if (this.labelOptions.streamer !== '---------------') {
+                if (this.labelOptions.streamer !== null) {
                     this.setStreamer(this.labelOptions.streamer);
                     this.setUser(this.user.email);
                 }
-                this.webSocket.send(JSON.stringify({
-                    message: 'GET_HIGHLIGHT',
-                    params: {
-                        game: this.labelOptions.game,
-                        streamer: this.labelOptions.streamer === '---------------' ? '' : this.labelOptions.streamer,
-                        user: this.labelOptions.streamer === '---------------' ? '' : this.user.email,
-                    },
-                }));
+                const params = {
+                    game: this.labelOptions.game,
+                    streamer: this.labelOptions.streamer === null ? '' : this.labelOptions.streamer,
+                    user: this.labelOptions.streamer === null ? '' : this.user.email,
+                };
+                this.requestTaskLoop(params);
+            },
+            requestTaskLoop(params) {
+                this.requestGetTask(params).then((response) => {
+                    console.log(response);
+                    if (response.task !== undefined) {
+                        this.setDeliveryTag(response.task.delivery_tag);
+                        delete response.task.delivery_tag;
+                        this.setHighlight(response.task);
+                        this.requestSetVideoInfo(response.task.video_id);
+                        this.$router.push('/label/');
+                    } else if (response.message !== undefined && response.message !== 'Something went wrong') {
+                        setTimeout(this.requestTaskLoop(params));
+                    } else {
+                        console.log('There was an error somewhere');
+                    }
+                });
             },
             gameSelected(game) {
                 this.labelOptions.game = game;
@@ -77,45 +90,10 @@
             streamerSelected(streamer) {
                 this.labelOptions.streamer = streamer;
             },
-            connectToWebSocket() {
-                const socketURL = `ws://${window.location.host}/ws/chat/`;
-                const websocket = new ReconnectingWebSocket(socketURL);
-                websocket.onopen = this.onOpen;
-                websocket.onclose = this.onClose;
-                websocket.onmessage = this.onMessage;
-                websocket.onerror = this.onError;
-                this.setWebSocket(websocket);
-            },
-            onOpen(event) {
-                console.log('Connection opened.', event.data);
-            },
-            onClose(event) {
-                console.log('Connection closed.', event.data);
-                // Try and Reconnect after five seconds
-                setTimeout(this.connectToWebSocket, 5000);
-            },
-            onMessage(event) {
-                const message = JSON.parse(event.data);
-                console.log('onMessage = ', message);
-                if (message.message === 'ERROR') {
-                    console.log('There was an error');
-                } else if (message.message === 'LOADING') {
-                    setTimeout(this.startLabeling, 5000);
-                } else {
-                    this.setDeliveryTag(message.message.delivery_tag);
-                    delete message.message.delivery_tag;
-                    this.setHighlight(message.message);
-                    this.requestSetVideoInfo(message.message.video_id);
-                    this.$router.push('/label/');
-                }
-            },
-            onError(event) {
-                console.log('An error occured:', event.data);
-            },
             ...mapMutations({
-                setWebSocket: 'setWebSocket',
-                setHighlight: 'highlight/setHighlight',
+                setHost: 'filler/setHost',
                 setStatus: 'highlight/setStatus',
+                setHighlight: 'highlight/setHighlight',
                 setVideoInfo: 'twitchdata/setVideoInfo',
                 setDeliveryTag: 'filler/setDeliveryTag',
                 setGame: 'label/setGame',
@@ -123,6 +101,7 @@
                 setUser: 'label/setUser',
             }),
             ...mapActions({
+                requestGetTask: 'filler/requestGetTask',
                 requestSetFillerGames: 'filler/requestSetFillerGames',
                 requestSetFillerStreamers: 'filler/requestSetFillerStreamers',
                 requestSetGameStreamers: 'filler/requestSetGameStreamers',
@@ -151,9 +130,15 @@
                 }
                 return allStreamers;
             },
+            gameDropdownText() {
+                return this.labelOptions.game !== null ? this.labelOptions.game : '---------------';
+            },
+            streamerDropdownText() {
+                return this.labelOptions.streamer !== null ? this.labelOptions.streamer : '---------------';
+            },
         },
         mounted() {
-            this.connectToWebSocket();
+            this.setHost(window.location.host);
             if (this.games === null) this.requestSetFillerGames();
             if (this.streamers === null) this.requestSetFillerStreamers();
         },
