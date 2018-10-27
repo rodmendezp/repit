@@ -66,10 +66,13 @@
                 getTypesDB: 'highlight/getTypesDB',
                 postHighlight: 'highlight/postHighlight',
                 requestPostJobAck: 'filler/requestPostJobAck',
+                requestGetTask: 'filler/requestGetTask',
+                requestSetVideoInfo: 'twitchdata/requestSetVideoInfo',
             }),
             ...mapMutations({
                 setStatus: 'highlight/setStatus',
                 setKeepLabeling: 'label/setKeepLabeling',
+                setHighlight: 'highlight/setHighlight',
                 setHighlightType: 'highlight/setHighlightType',
                 setHighlightStart: 'highlight/setHighlightStart',
                 setHighlightEnd: 'highlight/setHighlightEnd',
@@ -83,17 +86,30 @@
                 this.requestPostJobAck();
                 this.setDeliveryTag(null);
                 if (this.keepLabeling) {
+                    const params = {
+                        game: this.game,
+                        streamer: this.streamer !== null ? this.streamer : '',
+                        user: this.streamer !== null ? this.user : '',
+                    };
                     this.setStatus('processing');
-                    this.webSocket.send(JSON.stringify({
-                        message: 'GET_HIGHLIGHT',
-                        params: {
-                            game: this.game,
-                            streamer: this.streamer !== null ? this.streamer : '',
-                            user: this.streamer !== null ? this.user : '',
-                        },
-                    }));
+                    this.requestTaskLoop(params);
                 }
                 this.$router.push('/');
+            },
+            requestTaskLoop(params) {
+                this.requestGetTask(params).then((response) => {
+                    if (response.task !== undefined) {
+                        this.setDeliveryTag(response.task.delivery_tag);
+                        delete response.task.delivery_tag;
+                        this.setHighlight(response.task);
+                        this.requestSetVideoInfo(response.task.video_id);
+                        this.$router.push('/label/');
+                    } else if (response.message !== undefined && response.message !== 'Something went wrong') {
+                        setTimeout(this.requestTaskLoop(params));
+                    } else {
+                        console.log('There was an error somewhere');
+                    }
+                });
             },
             keepLabelingCheckboxInput() {
                 this.setKeepLabeling(!this.keepLabeling);

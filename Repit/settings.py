@@ -25,7 +25,7 @@ SECRET_KEY = os.environ.get('REPIT_SETTINGS_SECRET_KEY', 'cg#p$g+j9tax!#a3cup@1$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = [os.environ.get('SERVER_IP', '127.0.0.1'), os.environ.get('SERVER_INTERNAL_IP', '127.0.0.1')]
+ALLOWED_HOSTS = [os.environ.get('SERVER_IP', '127.0.0.1'), os.environ.get('SERVER_INTERNAL_IP', '127.0.0.1'), '127.0.0.1']
 
 AUTH_USER_MODEL = 'backend.User'
 
@@ -160,4 +160,4 @@ SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY',
 # CONFIG FOR 'django.contrib.sites'
 SITE_ID = 1
 
-FILLER_IP = os.environ.get('FILLER_IP', '127.0.0.1:9999')
+FILLER_INTERNAL_IP = os.environ.get('FILLER_INTERNAL_IP', '127.0.0.1:9999')
