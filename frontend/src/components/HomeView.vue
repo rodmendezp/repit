@@ -36,7 +36,7 @@
     import { mapGetters, mapActions, mapMutations } from 'vuex';
     import bDropdownItem from 'bootstrap-vue/es/components/dropdown/dropdown-item';
     import bDropdown from 'bootstrap-vue/es/components/dropdown/dropdown';
-    
+
     export default {
         name: 'HomeView',
         components: {
@@ -76,7 +76,7 @@
                         this.requestSetVideoInfo(response.task.video_id);
                         this.$router.push('/label/');
                     } else if (response.message !== undefined && response.message !== 'Something went wrong') {
-                        setTimeout(this.requestTaskLoop(params));
+                        setTimeout(this.requestTaskLoop(params), 5000);
                     } else {
                         console.log('There was an error somewhere');
                     }
