@@ -25,7 +25,7 @@ SECRET_KEY = os.environ.get('REPIT_SETTINGS_SECRET_KEY', 'cg#p$g+j9tax!#a3cup@1$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [os.environ.get('SERVER_IP', '127.0.0.1')]
+ALLOWED_HOSTS = [os.environ.get('SERVER_IP', '127.0.0.1'), '127.0.0.1']
 
 AUTH_USER_MODEL = 'backend.User'
 

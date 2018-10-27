@@ -1,3 +1,4 @@
+import os
 import six
 import sendgrid
 from sendgrid.helpers.mail.email import Email
@@ -78,7 +79,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def send_activation(self, template=None, domain=None):
         self.email_template = template or 'emails/registration/activate.html'
-        domain = domain or Site.objects.get_current().domain
+        domain = domain or os.environ.get('SERVER_IP', 'www.example.com')
         self.email_params = {
             'user': self,
             'domain': domain,
