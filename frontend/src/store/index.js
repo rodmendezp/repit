@@ -47,16 +47,12 @@ function GetHttpRequest(resolve, reject, url) {
 
 const state = {
     user: null,
-    webSocket: null,
     checkEmail: false,
 };
 
 const mutations = {
     setUser(s, user) {
         s.user = user;
-    },
-    setWebSocket(s, webSocket) {
-        s.webSocket = webSocket;
     },
     setCheckEmail(s, checkEmail) {
         s.checkEmail = checkEmail;
@@ -65,7 +61,6 @@ const mutations = {
 
 const getters = {
     getUser: s => s.user,
-    getWebSocket: s => s.webSocket,
     getCheckEmail: s => s.checkEmail,
 };
 
