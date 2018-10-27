@@ -160,4 +160,4 @@ SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY',
 # CONFIG FOR 'django.contrib.sites'
 SITE_ID = 1
 
-FILLER_IP = os.environ.get('FILLER_IP', '127.0.0.1:9999')
+FILLER_INTERNAL_IP = os.environ.get('FILLER_INTERNAL_IP', '127.0.0.1:9999')
