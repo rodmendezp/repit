@@ -13,7 +13,7 @@
 
 <script>
     import bButton from 'bootstrap-vue/es/components/button/button';
-    
+
     export default {
         name: 'landing',
         data() {
