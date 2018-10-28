@@ -1,4 +1,5 @@
 import json
+from django.http import HttpResponse
 from rest_framework.views import APIView
 from fillerapi.client import FillerClient
 
@@ -14,7 +15,10 @@ class TaskView(APIView):
         data = json.loads(response.content)
         if not data['queue_status']['processing']:
             response = filler_client.process.get(request.query_params)
-        return response
+            return response
+        else:
+            data['message'] = 'Already processing'
+            return HttpResponse(json.dumps(data), content_type='application/json')
 
     def post(self, request):
         filler_client = FillerClient()
