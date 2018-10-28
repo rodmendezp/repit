@@ -67,6 +67,7 @@
                 this.requestTaskLoop(params);
             },
             requestTaskLoop(params) {
+                console.log('requestTaskLoop');
                 this.requestGetTask(params).then((response) => {
                     console.log(response);
                     if (response.task !== undefined) {
@@ -76,7 +77,7 @@
                         this.requestSetVideoInfo(response.task.video_id);
                         this.$router.push('/label/');
                     } else if (response.message !== undefined && response.message !== 'Something went wrong') {
-                        setTimeout(this.requestTaskLoop(params), 5000);
+                        setTimeout(this.requestTaskLoop, 5000, params);
                     } else {
                         console.log('There was an error somewhere');
                     }
@@ -120,12 +121,18 @@
             }),
             defaultAndGameStreamers() {
                 const allStreamers = [];
+                const streamersSet = new Set();
                 if (this.streamers) {
-                    for (let i = 0; i < this.streamers.length; i += 1) allStreamers.push(this.streamers[i]);
+                    for (let i = 0; i < this.streamers.length; i += 1) {
+                        allStreamers.push(this.streamers[i]);
+                        streamersSet.add(this.streamers[i]);
+                    }
                 }
                 if (this.gameStreamers) {
                     for (let i = 0; i < this.gameStreamers.length; i += 1) {
-                        allStreamers.push(this.gameStreamers[i]);
+                        if (!streamersSet.has(this.gameStreamers[i])) {
+                            allStreamers.push(this.gameStreamers[i]);
+                        }
                     }
                 }
                 return allStreamers;
