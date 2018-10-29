@@ -1,3 +1,10 @@
+@echo off
+echo This will delete database and Highlight content
+setlocal
+:PROMPT
+SET /P AREYOUSURE=Are you sure (Y/[N])?
+IF /I "%AREYOUSURE%" NEQ "Y" GOTO END
+
 dropdb --username=postgres repit
 createdb --username=postgres repit
 find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
@@ -9,3 +16,6 @@ FOR /F %%i IN (.\fixtures.json) DO (
   python manage.py loaddata %%i
 )
 rm fixtures.json
+
+:END
+endlocal

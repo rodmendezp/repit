@@ -105,7 +105,7 @@
                         this.requestSetVideoInfo(response.task.video_id);
                         this.$router.push('/label/');
                     } else if (response.message !== undefined && response.message !== 'Something went wrong') {
-                        setTimeout(this.requestTaskLoop(params), 5000);
+                        setTimeout(this.requestTaskLoop, 5000, params);
                     } else {
                         console.log('There was an error somewhere');
                     }
