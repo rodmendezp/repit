@@ -1,0 +1,11 @@
+[
+  {
+    "model": "backend.User",
+    "fields": {
+      "username": "483ff822-dc4a-11e8-a660-5cf37082d2da",
+      "first_name": "Default",
+      "last_name": "User",
+      "email": "default_user@repit.io"
+    }
+  }
+]
