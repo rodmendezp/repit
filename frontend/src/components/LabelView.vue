@@ -35,6 +35,9 @@
         <div style="text-align: center" class="col" v-else-if="status === 'processing'">
             <div> LOADING </div>
         </div>
+        <div style="text-align: center" class="col" v-else-if="status === 'exception'">
+            <div> {{ exception }} </div>
+        </div>
         <div class="col"></div>
     </div>
 </template>
@@ -59,6 +62,7 @@
                     type: 'Choose Type',
                 },
                 labelTypes: [],
+                exception: '',
             };
         },
         methods: {
@@ -104,6 +108,9 @@
                         this.setHighlight(response.task);
                         this.requestSetVideoInfo(response.task.video_id);
                         this.$router.push('/label/');
+                    } else if (response.exception !== undefined) {
+                        this.setStatus('exception');
+                        this.exception = response.exception;
                     } else if (response.message !== undefined && response.message !== 'Something went wrong') {
                         setTimeout(this.requestTaskLoop, 5000, params);
                     } else {
