@@ -5,12 +5,15 @@ from fillerapi.client import FillerClient
 
 
 class TaskView(APIView):
-    def get(self, request):
+    @staticmethod
+    def get(request):
         filler_client = FillerClient()
         response = filler_client.task.get(request.query_params)
         data = json.loads(response.content)
-        if data['task'] is not None:
+        if 'task' in data and data['task'] is not None:
             return response
+        elif 'exception' in data:
+            return HttpResponse(json.dumps({'exception': data['exception']}), content_type='application/json')
         response = filler_client.status.get(request.query_params)
         data = json.loads(response.content)
         if not data['queue_status']['processing']:
@@ -20,7 +23,8 @@ class TaskView(APIView):
             data['message'] = 'Already processing'
             return HttpResponse(json.dumps(data), content_type='application/json')
 
-    def post(self, request):
+    @staticmethod
+    def post(request):
         filler_client = FillerClient()
         response = filler_client.task.post(request.data)
         return response
