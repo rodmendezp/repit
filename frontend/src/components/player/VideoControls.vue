@@ -25,14 +25,18 @@
                     {{ currentTimeString }} - {{ videoEndTimeString }}
                 </td>
             </tr>
+        </table>
+        <table class="st-end-controls">
             <tr>
-                <td width="5%"></td>
-                <td width="5%"></td>
-                <td width="5%"></td>
+                <td width="15%">
+                    <st-end-buttons is-start="true" :time="videoStartTime"></st-end-buttons>
+                </td>
                 <td width="70%">
                     <st-end-input-bar></st-end-input-bar>
                 </td>
-                <td width="15%"></td>
+                <td width="15%">
+                    <st-end-buttons is-start="false" :time="videoEndTime"></st-end-buttons>
+                </td>
             </tr>
         </table>
         <table class="extra-controls">
@@ -57,12 +61,14 @@
     import { mapGetters, mapMutations, mapActions } from 'vuex';
     import VideoSeekBar from './VideoSeekBar';
     import StEndInputBar from './StEndInputBar';
+    import StEndButtons from './StEndButtons';
 
     export default {
         name: 'VideoControls',
         components: {
             VideoSeekBar,
             StEndInputBar,
+            StEndButtons,
         },
         data() {
             return {
@@ -148,6 +154,14 @@
                 border: 0
                 background: rgba(255,255,255,0.1)
                 box-shadow: none !important
+
+    .st-end-controls
+        width: 100%
+        min-height: 25px
+        max-height: 25px
+        max-width: 800px
+        margin: 0 auto
+        border: 0
 
     .extra-controls
         width: 100%

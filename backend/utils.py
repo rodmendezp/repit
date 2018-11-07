@@ -55,7 +55,7 @@ def get_task():
         except Streamer.DoesNotExist:
             twitch_user = TwitchUser.objects.create(name='chocotaco', twid=1)
             channel = Channel.objects.create(twid=1)
-            streamer = Streamer(twitch_user=twitch_user, channel=channel)
+            streamer = Streamer.objects.create(twitch_user=twitch_user, channel=channel)
         try:
             game = Game.objects.get(name="PLAYERUNKNOWN'S BATTLEGROUNDS")
         except Game.DoesNotExist:
