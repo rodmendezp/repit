@@ -33,14 +33,17 @@ class Command(BaseCommand):
                     os.mkdir(streamer_folder)
                 os.rename(twitch_chat.file_path, os.path.join(streamer_folder, video_file_name))
         messages_added = 0
+        total_files = 0
         files_added = 0
         streamer_folders = os.listdir(chat_folder)
         for streamer_folder in streamer_folders:
             chats = os.listdir(os.path.join(chat_folder, streamer_folder))
             for chat in chats:
+                total_files += 1
                 video_twid = chat.replace('v', '').replace('.txt', '')
                 twitch_data_chat = Chat.objects.filter(video__twid=video_twid)
                 if twitch_data_chat and len(twitch_data_chat) > 0:
+                    print('Chat for video %d already exists' % video_twid)
                     continue
                 try:
                     Video.objects.get(twid=video_twid)
@@ -48,39 +51,48 @@ class Command(BaseCommand):
                     try:
                         self.add_video(video_twid)
                     except HTTPError:
+                        print('There was an HTTPError adding video %s' % video_twid)
+                        os.remove(os.path.join(chat_folder, streamer_folder, chat))
                         continue
                 twitch_chat = TwitchChat(video_twid, os.path.join(chat_folder, streamer_folder, chat))
                 twitch_chat.add_to_twitch_data()
+                files_added += 1
+        print('Total Files = %d' % total_files)
+        print('Files Added = %d' % files_added)
 
     def add_video(self, video_twid):
-        video = self.twitch_client.videos.get_by_id(video_twid)
-        streamer = Streamer.objects.filter(twitch_user__name=video['channel']['name'])
-        streamer = streamer[0] if streamer and len(streamer) > 0 else None
-        if not streamer:
-            twitch_user = TwitchUser.objects.filter(name=video['channel']['name'])
-            twitch_user = twitch_user[0] if twitch_user and len(twitch_user) > 0 else None
-            if not twitch_user:
-                twitch_user = TwitchUser.objects.create(twid=video['channel']['id'], name=video['channel']['name'])
-            channel = Channel.objects.filter(twid=video['channel']['id'])
-            channel = channel[0] if channel and len(channel) > 0 else None
-            if not channel:
-                channel = Channel.objects.create(twid=video['channel']['id'])
-            streamer = Streamer.objects.create(twitch_user=twitch_user, channel=channel)
-        game = Game.objects.filter(name=video['game'])
-        game = game[0] if game and len(game) > 0 else None
-        if not game:
-            game_twid = self.get_game_twid(video['game'])
-            game = Game.objects.create(name=video['game'], twid=game_twid)
-        video_instance = Video()
-        video_instance.twid = video_twid
-        video_instance.streamer = streamer
-        video_instance.game = game
-        video_instance.recorded = video['created_at']
-        video_instance.length = time(**self.seconds_to_h_m_s(video['length']))
-        video_instance.save()
+        try:
+            video = self.twitch_client.videos.get_by_id(video_twid)
+            streamer = Streamer.objects.filter(twitch_user__name=video['channel']['name'])
+            streamer = streamer[0] if streamer and len(streamer) > 0 else None
+            if not streamer:
+                twitch_user = TwitchUser.objects.filter(name=video['channel']['name'])
+                twitch_user = twitch_user[0] if twitch_user and len(twitch_user) > 0 else None
+                if not twitch_user:
+                    twitch_user = TwitchUser.objects.create(twid=video['channel']['id'], name=video['channel']['name'])
+                channel = Channel.objects.filter(twid=video['channel']['id'])
+                channel = channel[0] if channel and len(channel) > 0 else None
+                if not channel:
+                    channel = Channel.objects.create(twid=video['channel']['id'])
+                streamer = Streamer.objects.create(twitch_user=twitch_user, channel=channel)
+            game = Game.objects.filter(name=video['game'])
+            game = game[0] if game and len(game) > 0 else None
+            if not game:
+                game_twid = self.get_game_twid(video['game'])
+                game = Game.objects.create(name=video['game'], twid=game_twid)
+            video_instance = Video()
+            video_instance.twid = video_twid
+            video_instance.streamer = streamer
+            video_instance.game = game
+            video_instance.recorded = video['created_at']
+            video_instance.length = time(**self.seconds_to_h_m_s(video['length']))
+            video_instance.save()
+        except HTTPError as e:
+            print('There was a HTTPError with video %s' % video_twid)
+            raise HTTPError
 
     def get_game_twid(self, game):
-        games = self.twitch_client.games.get_top()
+        games = self.twitch_client.games.get_top(limit=100)
         games = list(filter(lambda x: x['game']['name'] == game, games))
         return games[0]['game']['id']
 
