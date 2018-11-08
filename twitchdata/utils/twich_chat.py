@@ -54,6 +54,10 @@ class TwitchChat:
                 print('There was a ConnectionError')
             except HTTPError:
                 print('There was a HTTPError')
+                print(sorted(names_to_add))
+        print('Users: %d, Users Database: %d, Users Missing: %d' %
+              (len(self.user_names), len(self.twitch_users_db), (len(self.user_names) - len(self.twitch_users_db))))
+        return
 
     def post_chat(self):
         video = Video.objects.get(twid=self.video_twid)
@@ -81,7 +85,7 @@ class Message:
             print('Invalid message: ', message_text)
             return
         self.timestamp = r.group(1)
-        self.user_name = r.group(2)
+        self.user_name = r.group(2).lower()
         self.text = r.group(3)
         self.fix()
 
@@ -92,7 +96,10 @@ class Message:
         # User name will be invalid if it has oriental characters (DB does not support them)
         for c in self.user_name:
             ord_c = ord(c)
-            if 0x4e00 <= ord_c <= 0x9fff or 0x30A0 <= ord_c <= 0x30ff or 0xac00 <= ord_c <= 0xd7af:
+            if 0x4e00 <= ord_c <= 0x9fff or 0x30A0 <= ord_c <= 0x30ff or \
+                    0xac00 <= ord_c <= 0xd7af or 0x3040 <= ord_c <= 0x309f or \
+                    0x1100 <= ord_c <= 0x11ff or 0x3130 <= ord_c <= 0x318f or \
+                    c == '\t':
                 return False
         return True
 
