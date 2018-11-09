@@ -20,3 +20,6 @@ static/
 
 # Migrations
 */migrations/
+
+# Custom Commands
+commands/
