@@ -1,37 +1,42 @@
 <template>
-    <div class="row full-height align-items-center">
-        <div class="col"></div>
-        <div style="text-align: center" class="col" v-if="status === 'idle'">
-            <h1 v-if="user"> Welcome {{ user.first_name }}</h1>
-            <div class="form-group start-label-form">
-                <div class="form-block">
-                    <label>Game</label>
-                    <b-dropdown variant="primary" class="btn-primary filler-dropdown" :text="gameDropdownText">
-                        <b-dropdown-item v-for="game in games"
-                                         :key="game" :value="game" @click="gameSelected(game)">
-                            {{ game }}
-                        </b-dropdown-item>
-                    </b-dropdown>
+    <div class="main-container full-height">
+        <div class="content-container" v-if="status === 'idle'">
+            <h3 v-if="user"> Welcome {{ user.first_name }}</h3>
+            <div class="container">
+                <div class="row form-group row-form-group">
+                    <label class="offset-sm-1 col-sm-3 col-form-label">Game</label>
+                    <div class="dropdown-container offset-sm-1 col-sm-7">
+                        <b-dropdown variant="primary" class="filler-dropdown" :text="gameDropdownText">
+                            <b-dropdown-item v-for="game in games" :key="game" :value="game" @click="gameSelected(game)">
+                                {{ game }}
+                            </b-dropdown-item>
+                        </b-dropdown>
+                    </div>
                 </div>
-                <div class="form-block">
-                    <label>Streamer</label>
-                    <b-dropdown variant="primary" class="btn-primary filler-dropdown" :text="streamerDropdownText">
-                        <b-dropdown-item v-for="streamer in defaultAndGameStreamers"
-                                         :key="streamer" :value="streamer" @click="streamerSelected(streamer)">
-                            {{ streamer }}
-                        </b-dropdown-item>
-                    </b-dropdown>
+                <div class="row form-group row-form-group">
+                    <label class="offset-sm-1 col-sm-3 col-form-label">Streamer</label>
+                    <div class="dropdown-container offset-sm-1 col-sm-7">
+                        <b-dropdown variant="primary" class="filler-dropdown" :text="streamerDropdownText">
+                            <b-dropdown-item v-for="streamer in defaultAndGameStreamers"
+                                             :key="streamer" :value="streamer" @click="streamerSelected(streamer)">
+                                {{ streamer }}
+                            </b-dropdown-item>
+                        </b-dropdown>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="offset-sm-5 col-sm-7 button-container">
+                        <button class="btn btn-primary" @click="startLabeling">Start Labeling</button>
+                    </div>
                 </div>
             </div>
-            <button class="btn btn-primary" @click="startLabeling">Start Labeling</button>
         </div>
-        <div style="text-align: center" class="col" v-else-if="status === 'processing'">
-            <div> LOADING </div>
+        <div v-else-if="status === 'processing'">
+            <h3>LOADING</h3>
         </div>
-        <div style="text-align: center" class="col" v-else-if="status === 'exception'">
-            <div> {{ exception }} </div>
+        <div v-else-if="status === 'exception'">
+            <h3>{{ exception }}</h3>
         </div>
-        <div class="col"></div>
     </div>
 </template>
 
@@ -162,22 +167,35 @@
 <style scoped lang="sass">
     @import '~@/styles/app/main.scss';
 
-    .start-label-form
+    .main-container
+        display: flex
+        flex-direction: column
+        justify-content: center
+        align-items: center
+
+    .content-container
+        display: flex
+        flex-direction: column
+        justify-content: space-evenly
+        height: 80%
+        width: 80%
+        min-width: 400px
         max-width: 600px
-        margin: 20px auto 30px
-
-    .form-block
-        margin-top: 5px
-        margin-bottom: 5px
-
-    .form-block label
-        display: inline-block
-        width: 100px
-        text-align: right
-        color: white
+        align-items: center
+        > h3
+            font-size: 4vh
 
     .filler-dropdown
-        margin-left: 10px
         background-color: transparent
 
+    .row-form-group
+        text-align: center
+        > label
+            color: white
+            font-size: 2.5vh
+
+    .button-container
+        text-align: center
+        > button
+            font-size: 2.5vh
 </style>
