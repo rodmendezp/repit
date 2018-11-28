@@ -1,5 +1,5 @@
 <template>
-    <div id="app" class="container-fluid full-height" v-cloak>
+    <div id="app" class="full-height" v-cloak>
         <router-view/>
     </div>
 </template>
