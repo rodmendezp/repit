@@ -1,8 +1,8 @@
 import os
 from datetime import time
-from twitch.client import TwitchClient
 from twitchdata.models import *
 from highlight.models import *
+from twitch.client import TwitchClient
 from twitchdata.utils.twich_chat import TwitchChat
 from django.core.management.base import BaseCommand
 from requests.exceptions import ConnectionError, HTTPError
