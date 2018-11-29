@@ -1,20 +1,20 @@
 <template>
     <div>
-        <table class="video-controls">
+        <table class="video-controls-table">
             <tr>
                 <td class="play" width="5%">
-                    <button class="btn-style" :disabled="!ready" :size="'sm'" @click="playPause">
+                    <button class="btn-fa-style" :disabled="!ready" :size="'sm'" @click="playPause">
                         <template v-if="playing"><i class="fa fa-pause"></i></template>
                         <template v-else><i class="fa fa-play"></i></template>
                     </button>
                 </td>
                 <td class="backward" width="5%">
-                    <button class="btn-style" :size="'sm'" @click="goBackward(5)">
+                    <button class="btn-fa-style" :size="'sm'" @click="goBackward(5)">
                         <i class="fa fa-undo"></i>
                     </button>
                 </td>
                 <td class="forward" width="5%"  @click="goForward(5)">
-                    <button class="btn-style" :size="'sm'" @click="goForward(5)">
+                    <button class="btn-fa-style" :size="'sm'" @click="goForward(5)">
                         <i class="fa fa-repeat"></i>
                     </button>
                 </td>
@@ -29,28 +29,14 @@
         <table class="st-end-controls">
             <tr>
                 <td width="15%">
-                    <st-end-buttons is-start="true" :time="videoStartTime"></st-end-buttons>
+                    <st-end-buttons :is-start="true" :time="videoStartTime"></st-end-buttons>
                 </td>
                 <td width="70%">
                     <st-end-input-bar></st-end-input-bar>
                 </td>
                 <td width="15%">
-                    <st-end-buttons is-start="false" :time="videoEndTime"></st-end-buttons>
+                    <st-end-buttons :is-start="false" :time="videoEndTime"></st-end-buttons>
                 </td>
-            </tr>
-        </table>
-        <table class="extra-controls">
-            <tr>
-                <td width="30%"></td>
-                <!--<td width="20%"></td>-->
-                <td width="40%">
-                    <button @click="setShowTwitchUI(!showTwitchUI)">
-                        <template v-if="showTwitchUI">Hide Twitch UI</template>
-                        <template v-else>Show Twitch UI</template>
-                    </button>
-                </td>
-                <!--<td width="20%"></td>-->
-                <td width="30%"></td>
             </tr>
         </table>
     </div>
@@ -121,7 +107,7 @@
 </script>
 
 <style lang="sass">
-    .video-controls
+    .video-controls-table
         width: 100%
         min-height: 25px
         max-height: 25px
@@ -140,21 +126,6 @@
             font-size: 12px
             font-weight: 400
 
-        .fa
-            color: #eee
-
-        .btn-style, .btn-style button
-            background: transparent !important
-            border: 0 !important
-            &:focus
-                border: 0
-                background: inherit
-                box-shadow: none !important
-            &:active
-                border: 0
-                background: rgba(255,255,255,0.1)
-                box-shadow: none !important
-
     .st-end-controls
         width: 100%
         min-height: 25px
@@ -163,8 +134,18 @@
         margin: 0 auto
         border: 0
 
-    .extra-controls
-        width: 100%
-        margin-top: 5px
-
+    .btn-fa-style
+        background: transparent
+        border: 0
+        color: #eee
+        &:focus
+            border: 0
+            background: inherit
+            box-shadow: none
+        &:active
+            border: 0
+            background: rgba(255,255,255,0.1)
+            box-shadow: none
+        &:disabled
+            color: rgba(255,255,255,0.1)
 </style>
