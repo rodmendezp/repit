@@ -96,6 +96,8 @@
         },
         mounted() {
             this.options.video = this.videoId;
+            // this.options.height = parseInt(window.innerHeight * 0.6, 10);
+            // this.options.width = parseInt(window.innerWidth * 0.8, 10);
             this.options.time = this.secondsToTimeString(this.stTime);
             if (!this.showTwitchUI) this.options.controls = false;
             this.options.autoplay = false;
