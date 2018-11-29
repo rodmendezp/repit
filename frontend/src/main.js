@@ -5,6 +5,7 @@ import Vuex from 'vuex';
 import BootstrapVue from 'bootstrap-vue';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
+import 'bootstrap';
 import App from './App';
 import AppRouter from './router/app';
 import store from './store';
