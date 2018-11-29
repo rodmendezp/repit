@@ -1,7 +1,7 @@
 <template>
     <div class="main-container full-height">
         <div class="content-container" v-if="status === 'idle'">
-            <h3 v-if="user"> Welcome {{ user.first_name }}</h3>
+            <h1 v-if="user"> Welcome {{ user.first_name }}</h1>
             <div class="container">
                 <div class="row form-group row-form-group">
                     <label class="offset-sm-1 col-sm-3 col-form-label">Game</label>
@@ -32,10 +32,10 @@
             </div>
         </div>
         <div v-else-if="status === 'processing'">
-            <h3>LOADING</h3>
+            <h1>LOADING</h1>
         </div>
         <div v-else-if="status === 'exception'">
-            <h3>{{ exception }}</h3>
+            <h1>{{ exception }}</h1>
         </div>
     </div>
 </template>
@@ -83,6 +83,7 @@
                         this.setDeliveryTag(response.task.delivery_tag);
                         delete response.task.delivery_tag;
                         this.setHighlight(response.task);
+                        this.setHighlightType(null);
                         this.requestSetVideoInfo(response.task.video_id);
                         this.$router.push('/label/');
                     } else if (response.exception !== undefined) {
@@ -107,6 +108,7 @@
                 setHost: 'filler/setHost',
                 setStatus: 'highlight/setStatus',
                 setHighlight: 'highlight/setHighlight',
+                setHighlightType: 'highlight/setHighlightType',
                 setVideoInfo: 'twitchdata/setVideoInfo',
                 setDeliveryTag: 'filler/setDeliveryTag',
                 setGame: 'label/setGame',
@@ -182,7 +184,7 @@
         min-width: 400px
         max-width: 600px
         align-items: center
-        > h3
+        > h1
             font-size: 4vh
 
     .filler-dropdown
