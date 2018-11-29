@@ -1,31 +1,44 @@
 <template>
     <div class="main-container full-height">
         <div class="content-container" v-if="status === 'idle'">
-            <h1 v-if="user"> Welcome {{ user.first_name }}</h1>
-            <div class="container">
+            <h1 class="welcome-title" v-if="user"> Welcome {{ user.first_name }}</h1>
+            <div class="container-fluid">
                 <div class="row form-group row-form-group">
-                    <label class="offset-sm-1 col-sm-3 col-form-label">Game</label>
-                    <div class="dropdown-container offset-sm-1 col-sm-7">
-                        <b-dropdown variant="primary" class="filler-dropdown" :text="gameDropdownText">
-                            <b-dropdown-item v-for="game in games" :key="game" :value="game" @click="gameSelected(game)">
-                                {{ game }}
-                            </b-dropdown-item>
-                        </b-dropdown>
+                    <label class="col-lg-5 col-form-label label-right">Game</label>
+                    <div class="offset-lg-1 col-lg-5 dd-container">
+                        <div class="btn-group b-dropdown dropdown">
+                            <button class="btn btn-primary dropdown-toggle dd-btn" type="button" id="game_dropdown"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{ gameDropdownText }}
+                            </button>
+                            <div role="menu" class="dropdown-menu" aria-labelledby="game_dropdown">
+                                <a data-boundary="viewport" role="menuitem" class="dropdown-item dd-item" href="#" target="_self"
+                                   @click="gameSelected(game)" :value="game" v-for="game in games">
+                                    {{ game }}
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="row form-group row-form-group">
-                    <label class="offset-sm-1 col-sm-3 col-form-label">Streamer</label>
-                    <div class="dropdown-container offset-sm-1 col-sm-7">
-                        <b-dropdown variant="primary" class="filler-dropdown" :text="streamerDropdownText">
-                            <b-dropdown-item v-for="streamer in defaultAndGameStreamers"
-                                             :key="streamer" :value="streamer" @click="streamerSelected(streamer)">
-                                {{ streamer }}
-                            </b-dropdown-item>
-                        </b-dropdown>
+                    <label class="offset-lg-1 col-lg-4 col-form-label label-right">Streamer</label>
+                    <div class="offset-lg-1 col-lg-4 dd-container">
+                        <div class="btn-group b-dropdown dropdown">
+                            <button class="btn btn-primary dropdown-toggle dd-btn" type="button" id="streamer_dropdown"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{ streamerDropdownText }}
+                            </button>
+                            <div role="menu" class="dropdown-menu" aria-labelledby="streamer_dropdown">
+                                <a data-boundary="viewport" role="menuitem" class="dropdown-item dd-item" href="#" target="_self"
+                                   @click="streamerSelected(streamer)" :value="streamer" v-for="streamer in defaultAndGameStreamers">
+                                    {{ streamer }}
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="offset-sm-5 col-sm-7 button-container">
+                    <div class="offset-lg-6 col-lg-6 button-container">
                         <button class="btn btn-primary" @click="startLabeling">Start Labeling</button>
                     </div>
                 </div>
@@ -57,6 +70,7 @@
                     game: null,
                     streamer: null,
                 },
+                longestItem: '',
                 exception: '',
             };
         },
@@ -103,6 +117,9 @@
             },
             streamerSelected(streamer) {
                 this.labelOptions.streamer = streamer;
+            },
+            setDropdownLongestWidth() {
+                console.log();
             },
             ...mapMutations({
                 setHost: 'filler/setHost',
@@ -161,7 +178,11 @@
         mounted() {
             this.setHost(window.location.host);
             if (this.games === null) this.requestSetFillerGames();
-            if (this.streamers === null) this.requestSetFillerStreamers();
+            if (this.streamers === null) {
+                this.requestSetFillerStreamers().then(() => this.setDropdownLongestWidth());
+                // this.requestSetFillerStreamers().then(() => this.setLongestDropdownItem());
+            }
+            // if (this.games !== null && this.streamers !== null) this.setLongestDropdownItem();
         },
     };
 </script>
@@ -180,21 +201,39 @@
         flex-direction: column
         justify-content: space-evenly
         height: 80%
-        width: 80%
-        min-width: 400px
-        max-width: 600px
+        width: 100%
         align-items: center
         > h1
             font-size: 4vh
 
-    .filler-dropdown
-        background-color: transparent
+    .dropdown-menu
+        max-height: 250px
+        overflow-y: auto
+
+    .welcome-title
+        text-align: center
+
+    @media screen and (min-width: 992px)
+        .dd-container
+            display: flex
+            justify-content: flex-start
+
+        .label-right
+            display: flex
+            justify-content: flex-end
+
+        .button-container
+            display: flex
+            justify-content: flex-start
+
+    .dd-btn, .dd-item
+        font-size: 2vh
 
     .row-form-group
         text-align: center
         > label
             color: white
-            font-size: 2.5vh
+            font-size: 2vh
 
     .button-container
         text-align: center
