@@ -4,11 +4,13 @@
             <i class="fa fa-backward"></i>
         </button>
         <button :disabled="isMinusDisabled" class="btn-fa-style"
-                @click="modifyTime(isStart, -1)" @mousedown="mouseDown(true)" @mouseup="mouseUp(true)">
+                @click="modifyTime(isStart, -1)" @mousedown="mouseDown(true)" @mouseup="mouseUp(true)"
+                @touchstart="mouseDown(true)" @touchend="mouseUp(true)">
             <i class="fa fa-minus"></i>
         </button>
         <button :disabled="isPlusDisabled" class="btn-fa-style"
-                @click="modifyTime(isStart, 1)" @mousedown="mouseDown(false)" @mouseup="mouseUp(false)">
+                @click="modifyTime(isStart, 1)" @mousedown="mouseDown(false)" @mouseup="mouseUp(false)"
+                @touchstart="mouseDown(false)" @touchend="mouseUp(false)">
             <i class="fa fa-plus"></i>
         </button>
         <button :disabled="isEndCursorRight" class="btn-fa-style" @click="setExtraTimeZero(isStart)" v-if="!isStart">
@@ -68,6 +70,7 @@
                 }
             },
             mouseDown(isMinus) {
+                console.log('mouseDown');
                 if (this.isStart && isMinus) return;
                 else if (!this.isStart && !isMinus) return;
                 this.isMouseDown[isMinus ? 0 : 1] = true;
