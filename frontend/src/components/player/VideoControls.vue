@@ -2,39 +2,39 @@
     <div>
         <table class="video-controls-table">
             <tr>
-                <td class="play" width="5%">
+                <td class="play">
                     <button class="btn-fa-style" :disabled="!ready" :size="'sm'" @click="playPause">
                         <template v-if="playing"><i class="fa fa-pause"></i></template>
                         <template v-else><i class="fa fa-play"></i></template>
                     </button>
                 </td>
-                <td class="backward" width="5%">
+                <td class="backward">
                     <button class="btn-fa-style" :size="'sm'" @click="goBackward(5)">
                         <i class="fa fa-undo"></i>
                     </button>
                 </td>
-                <td class="forward" width="5%"  @click="goForward(5)">
+                <td class="forward">
                     <button class="btn-fa-style" :size="'sm'" @click="goForward(5)">
                         <i class="fa fa-repeat"></i>
                     </button>
                 </td>
-                <td class="seek-bar" width="70%">
+                <td class="seek-bar">
                     <video-seek-bar></video-seek-bar>
                 </td>
-                <td class="time" width="15%">
+                <td class="time">
                     {{ currentTimeString }} - {{ videoEndTimeString }}
                 </td>
             </tr>
         </table>
         <table class="st-end-controls">
             <tr>
-                <td width="15%">
+                <td class="st-controls">
                     <st-end-buttons :is-start="true" :time="videoStartTime"></st-end-buttons>
                 </td>
-                <td width="70%">
+                <td class="st-end-bar">
                     <st-end-input-bar></st-end-input-bar>
                 </td>
-                <td width="15%">
+                <td class="end-controls">
                     <st-end-buttons :is-start="false" :time="videoEndTime"></st-end-buttons>
                 </td>
             </tr>
@@ -148,4 +148,39 @@
             box-shadow: none
         &:disabled
             color: rgba(255,255,255,0.1)
+
+    @media screen and (max-width: 992px)
+        .btn-fa-style
+            font-size: 25px
+
+        .play, .backward, .forward
+            width: 6.6%
+
+        .seek-bar
+            width: 60%
+
+        .time
+            width: 20%
+
+        .st-controls, .end-controls
+            width: 20%
+
+        .st-end-bar
+            width: 60%
+
+    @media screen and (min-width: 993px)
+        .play, .backward, .forward
+            width: 5%
+
+        .seek-bar
+            width: 70%
+
+        .time
+            width: 15%
+
+        .st-controls, .end-controls
+            width: 15%
+
+        .st-end-bar
+            width: 70%
 </style>
