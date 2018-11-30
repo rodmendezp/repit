@@ -1,13 +1,13 @@
 <template>
     <div class="container">
         <div class="row form-group">
-            <div class="offset-sm-1 col-sm-2" v-if="!typeSetted"></div>
-            <div class="offset-sm-1 col-sm-2 repit-text" v-else>Type</div>
+            <div class="offset-sm-1 col-sm-2 repit-text">Type</div>
+            <div class="" v-if="!typeSetted">Choose a type from the options below</div>
             <button class="btn type-btn-active btn-primary" v-if="typeSetted">{{ highlight.type }}</button>
             <button class="btn type-btn-hidden btn-primary" v-else>H</button>
         </div>
         <div class="row form-group">
-            <div class="col-sm-3 repit-text" v-if="!typeSetted">Select a type </div>
+            <div class="col-sm-3 repit-text" v-if="!typeSetted"></div>
             <div class="col-sm-3 repit-text" v-else>Click to change</div>
             <button :class="`btn type-btn ${getTypeBtnMargin(index)}`" v-for="(hlType, index) in hlTypes"
                     @click="typeSelected(hlType)" v-if="hlType !== highlight.type">{{ hlType }}</button>
