@@ -140,14 +140,16 @@
         justify-content: center
         align-items: center
 
+    @media screen and (max-width: 992px)
+        .content-container
+            width: 100%
+
     .label-type-container
         margin-top: 15px
 
-    /*@media only screen and (min-width: 1024px)*/
-        /*.content-container*/
-            /*justify-content: center*/
+    @media screen and (orientation: landscape) and (max-width: 992px)
+        .content-container
+            margin-top: 10px
+            justify-content: flex-start
 
-    /*@media only screen and (orientation: landscape) and (max-width: 1023px)*/
-        /*.content-container*/
-            /*width: 100%*/
 </style>
