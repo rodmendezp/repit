@@ -2,11 +2,15 @@ import json
 from django.http import HttpResponse
 from rest_framework.views import APIView
 from fillerapi.client import FillerClient
+from django.conf import settings
+from backend import utils
 
 
 class TaskView(APIView):
     @staticmethod
     def get(request):
+        if settings.DEBUG_FILLER:
+            return HttpResponse(json.dumps(utils.get_task()), content_type='application/json')
         filler_client = FillerClient()
         response = filler_client.task.get(request.query_params)
         data = json.loads(response.content)
@@ -25,6 +29,8 @@ class TaskView(APIView):
 
     @staticmethod
     def post(request):
+        if settings.DEBUG_FILLER:
+            return HttpResponse(json.dumps({'status': 'SUCCEED'}), content_type='application/json')
         filler_client = FillerClient()
         response = filler_client.task.post(request.data)
         return response
@@ -32,6 +38,8 @@ class TaskView(APIView):
 
 class FillerGame(APIView):
     def get(self, request):
+        if settings.DEBUG_FILLER:
+            return HttpResponse(json.dumps(utils.get_games()), content_type='application/json')
         filler_client = FillerClient()
         response = filler_client.filler_game.get_objects_response(request.query_params)
         return response
@@ -39,9 +47,11 @@ class FillerGame(APIView):
 
 class FillerStreamer(APIView):
     def get(self, request):
-        filler_client = FillerClient()
         game = request.query_params.get('game', None)
         game_defaults = request.query_params.get('game_defaults', None)
+        if settings.DEBUG_FILLER:
+            return HttpResponse(json.dumps(utils.get_streamers(game_defaults)), content_type='application/json')
+        filler_client = FillerClient()
         if game:
             return filler_client.filler_streamer.get_game_current_streamers(game)
         elif game_defaults:

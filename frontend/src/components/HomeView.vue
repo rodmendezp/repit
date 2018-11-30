@@ -1,37 +1,55 @@
 <template>
-    <div class="row full-height align-items-center">
-        <div class="col"></div>
-        <div style="text-align: center" class="col" v-if="status === 'idle'">
-            <h1 v-if="user"> Welcome {{ user.first_name }}</h1>
-            <div class="form-group start-label-form">
-                <div class="form-block">
-                    <label>Game</label>
-                    <b-dropdown variant="primary" class="btn-primary filler-dropdown" :text="gameDropdownText">
-                        <b-dropdown-item v-for="game in games"
-                                         :key="game" :value="game" @click="gameSelected(game)">
-                            {{ game }}
-                        </b-dropdown-item>
-                    </b-dropdown>
+    <div class="main-container full-height">
+        <div class="content-container" v-if="status === 'idle'">
+            <h1 class="welcome-title" v-if="user"> Welcome {{ user.first_name }}</h1>
+            <div class="container-fluid">
+                <div class="row form-group row-form-group">
+                    <label class="col-lg-5 col-form-label label-right">Game</label>
+                    <div class="offset-lg-1 col-lg-5 dd-container">
+                        <div class="btn-group b-dropdown dropdown">
+                            <button class="btn btn-primary dropdown-toggle dd-btn" type="button" id="game_dropdown"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{ gameDropdownText }}
+                            </button>
+                            <div role="menu" class="dropdown-menu" aria-labelledby="game_dropdown">
+                                <a data-boundary="viewport" role="menuitem" class="dropdown-item dd-item" href="#" target="_self"
+                                   @click="gameSelected(game)" :value="game" v-for="game in games">
+                                    {{ game }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-block">
-                    <label>Streamer</label>
-                    <b-dropdown variant="primary" class="btn-primary filler-dropdown" :text="streamerDropdownText">
-                        <b-dropdown-item v-for="streamer in defaultAndGameStreamers"
-                                         :key="streamer" :value="streamer" @click="streamerSelected(streamer)">
-                            {{ streamer }}
-                        </b-dropdown-item>
-                    </b-dropdown>
+                <div class="row form-group row-form-group">
+                    <label class="offset-lg-1 col-lg-4 col-form-label label-right">Streamer</label>
+                    <div class="offset-lg-1 col-lg-4 dd-container">
+                        <div class="btn-group b-dropdown dropdown">
+                            <button class="btn btn-primary dropdown-toggle dd-btn" type="button" id="streamer_dropdown"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{ streamerDropdownText }}
+                            </button>
+                            <div role="menu" class="dropdown-menu" aria-labelledby="streamer_dropdown">
+                                <a data-boundary="viewport" role="menuitem" class="dropdown-item dd-item" href="#" target="_self"
+                                   @click="streamerSelected(streamer)" :value="streamer" v-for="streamer in defaultAndGameStreamers">
+                                    {{ streamer }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="offset-lg-6 col-lg-6 button-container">
+                        <button class="btn btn-primary" @click="startLabeling">Start Labeling</button>
+                    </div>
                 </div>
             </div>
-            <button class="btn btn-primary" @click="startLabeling">Start Labeling</button>
         </div>
-        <div style="text-align: center" class="col" v-else-if="status === 'processing'">
-            <div> LOADING </div>
+        <div v-else-if="status === 'processing'">
+            <h1>LOADING</h1>
         </div>
-        <div style="text-align: center" class="col" v-else-if="status === 'exception'">
-            <div> {{ exception }} </div>
+        <div v-else-if="status === 'exception'">
+            <h1>{{ exception }}</h1>
         </div>
-        <div class="col"></div>
     </div>
 </template>
 
@@ -52,6 +70,7 @@
                     game: null,
                     streamer: null,
                 },
+                longestItem: '',
                 exception: '',
             };
         },
@@ -78,6 +97,7 @@
                         this.setDeliveryTag(response.task.delivery_tag);
                         delete response.task.delivery_tag;
                         this.setHighlight(response.task);
+                        this.setHighlightType(null);
                         this.requestSetVideoInfo(response.task.video_id);
                         this.$router.push('/label/');
                     } else if (response.exception !== undefined) {
@@ -98,10 +118,14 @@
             streamerSelected(streamer) {
                 this.labelOptions.streamer = streamer;
             },
+            setDropdownLongestWidth() {
+                console.log();
+            },
             ...mapMutations({
                 setHost: 'filler/setHost',
                 setStatus: 'highlight/setStatus',
                 setHighlight: 'highlight/setHighlight',
+                setHighlightType: 'highlight/setHighlightType',
                 setVideoInfo: 'twitchdata/setVideoInfo',
                 setDeliveryTag: 'filler/setDeliveryTag',
                 setGame: 'label/setGame',
@@ -154,7 +178,11 @@
         mounted() {
             this.setHost(window.location.host);
             if (this.games === null) this.requestSetFillerGames();
-            if (this.streamers === null) this.requestSetFillerStreamers();
+            if (this.streamers === null) {
+                this.requestSetFillerStreamers().then(() => this.setDropdownLongestWidth());
+                // this.requestSetFillerStreamers().then(() => this.setLongestDropdownItem());
+            }
+            // if (this.games !== null && this.streamers !== null) this.setLongestDropdownItem();
         },
     };
 </script>
@@ -162,22 +190,53 @@
 <style scoped lang="sass">
     @import '~@/styles/app/main.scss';
 
-    .start-label-form
-        max-width: 600px
-        margin: 20px auto 30px
+    .main-container
+        display: flex
+        flex-direction: column
+        justify-content: center
+        align-items: center
 
-    .form-block
-        margin-top: 5px
-        margin-bottom: 5px
+    .content-container
+        display: flex
+        flex-direction: column
+        justify-content: space-evenly
+        height: 80%
+        width: 100%
+        align-items: center
+        > h1
+            font-size: 4vh
 
-    .form-block label
-        display: inline-block
-        width: 100px
-        text-align: right
-        color: white
+    .dropdown-menu
+        max-height: 250px
+        overflow-y: auto
 
-    .filler-dropdown
-        margin-left: 10px
-        background-color: transparent
+    .welcome-title
+        text-align: center
 
+    @media screen and (min-width: 992px)
+        .dd-container
+            display: flex
+            justify-content: flex-start
+
+        .label-right
+            display: flex
+            justify-content: flex-end
+
+        .button-container
+            display: flex
+            justify-content: flex-start
+
+    .dd-btn, .dd-item
+        font-size: 2vh
+
+    .row-form-group
+        text-align: center
+        > label
+            color: white
+            font-size: 2vh
+
+    .button-container
+        text-align: center
+        > button
+            font-size: 2.5vh
 </style>
