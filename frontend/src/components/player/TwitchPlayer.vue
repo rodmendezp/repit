@@ -79,6 +79,15 @@
                 }
                 return seconds;
             },
+            windowResized() {
+                if (window.innerWidth < 1024 && window.innerHeight < window.innerWidth) {
+                    this.player.setWidth(600);
+                    this.player.setHeight(300);
+                } else {
+                    this.player.setWidth(640);
+                    this.player.setHeight(390);
+                }
+            },
             ...mapMutations({
                 setReady: 'player/setReady',
                 setPlaying: 'player/setPlaying',
@@ -96,8 +105,10 @@
         },
         mounted() {
             this.options.video = this.videoId;
-            // this.options.height = parseInt(window.innerHeight * 0.6, 10);
-            // this.options.width = parseInt(window.innerWidth * 0.8, 10);
+            if (window.innerWidth < 1024 && window.innerHeight < window.innerWidth) {
+                this.options.height = 300;
+                this.options.width = 600;
+            }
             this.options.time = this.secondsToTimeString(this.stTime);
             if (!this.showTwitchUI) this.options.controls = false;
             this.options.autoplay = false;
@@ -142,9 +153,11 @@
                     // console.log('Twitch Player PLAYBACK_BLOCKED');
                 });
             });
+            window.addEventListener('resize', this.windowResized);
         },
         beforeDestroy() {
             this.destroying = true;
+            window.removeEventListener('resize', this.windowResized);
         },
         watch: {
             playing(isPlaying) {
@@ -177,8 +190,5 @@
 </script>
 
 <style lang="sass">
-    /*.twitch-player*/
-        /*width: 400px*/
-        /*height: 400px*/
 
 </style>
