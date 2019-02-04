@@ -154,8 +154,8 @@ CORS_ORIGIN_WHITELIST = (
 
 # MAIL CONFIRMATION CONFIG
 ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'contact@repit.io')
-SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY',
-                                  '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')
+# GET NEW SENDGRID API KEY, PREVIOUS ONE DELETED
+SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY', None)
 
 # CONFIG FOR 'django.contrib.sites'
 SITE_ID = 1
